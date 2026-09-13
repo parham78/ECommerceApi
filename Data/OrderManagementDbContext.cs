@@ -26,6 +26,14 @@ public class OrderManagementDbContext
         modelBuilder.Entity<Product>()
     .Property(p => p.RowVersion)
     .IsRowVersion();
+        modelBuilder.Entity<Product>()
+        .Property(p => p.Sku)
+        .HasMaxLength(50)
+        .IsRequired();
+
+        modelBuilder.Entity<Product>()
+            .HasIndex(p => p.Sku)
+            .IsUnique();
         modelBuilder.Entity<Customer>()
         .HasIndex(c => c.Email)
         .IsUnique();

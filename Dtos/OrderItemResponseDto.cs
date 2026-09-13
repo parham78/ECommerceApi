@@ -11,4 +11,5 @@ public class OrderItemResponseDto
     public decimal UnitPrice { get; set; }
 
     public decimal LineTotal { get; set; }
+    public string ProductSku { get; set; } = string.Empty;
 }

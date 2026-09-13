@@ -13,4 +13,5 @@ public class OrderItem
 
     public decimal UnitPrice { get; set; }
     public string ProductName { get; set; } = string.Empty;
+    public string ProductSku { get; set; } = string.Empty;
 }

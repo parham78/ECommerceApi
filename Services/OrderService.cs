@@ -57,6 +57,7 @@ public class OrderService : IOrderService
                         Id = oi.Id,
                         ProductId = oi.ProductId,
                         ProductName = oi.ProductName,
+                        ProductSku = oi.ProductSku,
                         Quantity = oi.Quantity,
                         UnitPrice = oi.UnitPrice,
                         LineTotal = oi.Quantity * oi.UnitPrice
@@ -130,6 +131,7 @@ public class OrderService : IOrderService
                         Id = oi.Id,
                         ProductId = oi.ProductId,
                         ProductName = oi.ProductName,
+                        ProductSku = oi.ProductSku,
                         Quantity = oi.Quantity,
                         UnitPrice = oi.UnitPrice,
                         LineTotal = oi.Quantity * oi.UnitPrice
@@ -171,6 +173,7 @@ public class OrderService : IOrderService
                 Id = o.Id,
                 CustomerId = o.CustomerId,
                 CustomerName = o.Customer.Name,
+
                 TotalPrice = o.TotalPrice,
                 Status = o.Status,
                 CreatedAt = o.CreatedAt,
@@ -181,6 +184,7 @@ public class OrderService : IOrderService
                         Id = oi.Id,
                         ProductId = oi.ProductId,
                         ProductName = oi.ProductName,
+                        ProductSku = oi.ProductSku,
                         Quantity = oi.Quantity,
                         UnitPrice = oi.UnitPrice,
                         LineTotal = oi.Quantity * oi.UnitPrice
@@ -219,6 +223,7 @@ public class OrderService : IOrderService
                         Id = oi.Id,
                         ProductId = oi.ProductId,
                         ProductName = oi.ProductName,
+                        ProductSku = oi.ProductSku,
                         Quantity = oi.Quantity,
                         UnitPrice = oi.UnitPrice,
                         LineTotal = oi.Quantity * oi.UnitPrice
@@ -324,6 +329,12 @@ public class OrderService : IOrderService
         {
             var product = products[itemDto.ProductId];
 
+            if (!product.IsActive)
+            {
+                throw new BadRequestException(
+                    $"Product {product.Id} is not currently available.");
+            }
+
             if (product.Stock < itemDto.Quantity)
             {
                 throw new InsufficientStockException(
@@ -337,7 +348,8 @@ public class OrderService : IOrderService
                 ProductId = product.Id,
                 Quantity = itemDto.Quantity,
                 UnitPrice = product.Price,
-                ProductName = product.Name
+                ProductName = product.Name,
+                ProductSku = product.Sku
             };
 
             order.OrderItems.Add(orderItem);

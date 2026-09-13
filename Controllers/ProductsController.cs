@@ -13,9 +13,25 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+    string? search = null,
+    decimal? minPrice = null,
+    decimal? maxPrice = null,
+    bool? inStock = null,
+    string? sortBy = null,
+    string? sortDirection = null,
+    int page = 1,
+    int pageSize = 10)
     {
-        var products = await _productService.GetAll();
+        var products = await _productService.GetAll(
+            search,
+            minPrice,
+            maxPrice,
+            inStock,
+            sortBy,
+            sortDirection,
+            page,
+            pageSize);
 
         return Ok(products);
     }
@@ -88,5 +104,15 @@ public class ProductsController : ControllerBase
         await _productService.Delete(id);
 
         return NoContent();
+    }
+    [HttpPut("{id}")]
+    [Authorize(Roles = AppRoles.Admin)]
+    public async Task<IActionResult> UpdateProduct(
+    int id,
+    UpdateProductRequestDto dto)
+    {
+        var product = await _productService.Update(id, dto);
+
+        return Ok(product);
     }
 }

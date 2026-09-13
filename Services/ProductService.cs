@@ -11,17 +11,100 @@ public class ProductService : IProductService
     {
         _context = context;
     }
-    public async Task<List<Product>> GetAll()
+    public async Task<PagedResultDto<Product>> GetAll(
+    string? search,
+    decimal? minPrice,
+    decimal? maxPrice,
+    bool? inStock,
+    string? sortBy,
+    string? sortDirection,
+    int page,
+    int pageSize)
     {
-        return await _context.Products
-            .AsNoTracking()
+        var query = _context.Products
+    .AsNoTracking()
+    .Where(p => p.IsActive)
+    .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(p =>
+                p.Name.Contains(search) ||
+                p.Sku.Contains(search));
+        }
+
+        if (minPrice.HasValue)
+        {
+            query = query.Where(p =>
+                p.Price >= minPrice.Value);
+        }
+
+        if (maxPrice.HasValue)
+        {
+            query = query.Where(p =>
+                p.Price <= maxPrice.Value);
+        }
+
+        if (inStock == true)
+        {
+            query = query.Where(p => p.Stock > 0);
+        }
+        else if (inStock == false)
+        {
+            query = query.Where(p => p.Stock == 0);
+        }
+
+        var totalCount = await query.CountAsync();
+
+        if (sortBy == "price")
+        {
+            if (sortDirection == "desc")
+            {
+                query = query.OrderByDescending(p => p.Price);
+            }
+            else
+            {
+                query = query.OrderBy(p => p.Price);
+            }
+        }
+        else if (sortBy == "name")
+        {
+            if (sortDirection == "desc")
+            {
+                query = query.OrderByDescending(p => p.Name);
+            }
+            else
+            {
+                query = query.OrderBy(p => p.Name);
+            }
+        }
+        else
+        {
+            query = query.OrderBy(p => p.Id);
+        }
+
+        var products = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PagedResultDto<Product>
+        {
+            Items = products,
+            CurrentPage = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling(
+                totalCount / (double)pageSize)
+        };
     }
     public async Task<Product> GetById(int id)
     {
         var product = await _context.Products
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .FirstOrDefaultAsync(p =>
+             p.Id == id &&
+             p.IsActive);
 
         if (product is null)
         {
@@ -35,7 +118,9 @@ public class ProductService : IProductService
     {
         var product = await _context.Products
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Name == name);
+            .FirstOrDefaultAsync(p =>
+    p.Name == name &&
+    p.IsActive);
 
         if (product is null)
         {
@@ -49,7 +134,9 @@ public class ProductService : IProductService
     {
         var products = await _context.Products
        .AsNoTracking()
-       .Where(p => p.Price > minimumPrice)
+       .Where(p =>
+    p.IsActive &&
+    p.Price > minimumPrice)
        .OrderBy(p => p.Price)
     .ToListAsync();
 
@@ -57,12 +144,21 @@ public class ProductService : IProductService
     }
     public async Task<Product> Create(CreateProductRequestDto dto)
     {
+        var skuExists = await _context.Products
+    .AnyAsync(p => p.Sku == dto.Sku);
+
+        if (skuExists)
+        {
+            throw new BadRequestException(
+                $"A product with SKU '{dto.Sku}' already exists.");
+        }
         var product = new Product
         {
-
             Name = dto.Name,
             Price = dto.Price,
-            Stock = dto.Stock
+            Stock = dto.Stock,
+            Sku = dto.Sku,
+            IsActive = dto.IsActive
         };
 
         _context.Products.Add(product);
@@ -132,6 +228,48 @@ public class ProductService : IProductService
                 "This product cannot be deleted because it is used in an order.",
                 ex);
         }
+    }
+    public async Task<Product> Update(
+    int id,
+    UpdateProductRequestDto dto)
+    {
+        var product = await _context.Products
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product == null)
+        {
+            throw new ProductNotFoundException(
+                $"Product {id} was not found.");
+        }
+
+        var skuExists = await _context.Products
+            .AnyAsync(p =>
+                p.Sku == dto.Sku &&
+                p.Id != id);
+
+        if (skuExists)
+        {
+            throw new BadRequestException(
+                $"A product with SKU '{dto.Sku}' already exists.");
+        }
+
+        product.Name = dto.Name;
+        product.Sku = dto.Sku;
+        product.Price = dto.Price;
+        product.Stock = dto.Stock;
+        product.IsActive = dto.IsActive;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new ConcurrencyConflictException(
+                "The product was changed by another request. Please try again.");
+        }
+
+        return product;
     }
 
 }

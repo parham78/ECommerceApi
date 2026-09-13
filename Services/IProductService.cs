@@ -1,6 +1,14 @@
 public interface IProductService
 {
-    Task<List<Product>> GetAll();
+    Task<PagedResultDto<Product>> GetAll(
+    string? search,
+    decimal? minPrice,
+    decimal? maxPrice,
+    bool? inStock,
+    string? sortBy,
+    string? sortDirection,
+    int page,
+    int pageSize);
 
     Task<Product> GetById(int id);
 
@@ -11,6 +19,7 @@ public interface IProductService
     Task<Product> Create(CreateProductRequestDto dto);
 
     Task<Product> UpdateStock(int id, int newStock);
+    Task<Product> Update(int id, UpdateProductRequestDto dto);
 
     Task Delete(int id);
 }
