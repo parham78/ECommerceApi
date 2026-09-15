@@ -35,12 +35,34 @@ public class ProductsController : ControllerBase
 
         return Ok(products);
     }
+    [HttpGet("admin")]
+    [Authorize(Roles = AppRoles.Admin)]
+    public async Task<IActionResult> GetAllForAdmin(
+    bool? isActive = null,
+    int page = 1,
+    int pageSize = 10)
+    {
+        var products = await _productService.GetAllForAdmin(
+            isActive,
+            page,
+            pageSize);
+
+        return Ok(products);
+    }
 
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
         var product = await _productService.GetById(id);
+
+        return Ok(product);
+    }
+    [HttpGet("admin/{id}")]
+    [Authorize(Roles = AppRoles.Admin)]
+    public async Task<IActionResult> GetByIdForAdmin(int id)
+    {
+        var product = await _productService.GetByIdForAdmin(id);
 
         return Ok(product);
     }
@@ -83,15 +105,11 @@ public class ProductsController : ControllerBase
     [HttpPut("{id}/stock")]
     [Authorize(Roles = AppRoles.Admin)]
     public async Task<IActionResult> UpdateStock(
-        int id,
-        [FromBody] UpdateStockRequestDto dto)
+    int id,
+    [FromBody] UpdateStockRequestDto dto)
     {
-        var newStock = dto.NewStock
-            ?? throw new BadRequestException(
-                "NewStock is required.");
-
         var product =
-            await _productService.UpdateStock(id, newStock);
+            await _productService.UpdateStock(id, dto);
 
         return Ok(product);
     }
