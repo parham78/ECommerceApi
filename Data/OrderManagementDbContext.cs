@@ -8,6 +8,7 @@ public class OrderManagementDbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Address> Addresses { get; set; }
 
     public OrderManagementDbContext(
         DbContextOptions<OrderManagementDbContext> options)
@@ -42,6 +43,54 @@ public class OrderManagementDbContext
     .WithOne()
     .HasForeignKey<Customer>(c => c.UserId)
     .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Address>()
+        .HasOne(a => a.Customer)
+        .WithMany(c => c.Addresses)
+        .HasForeignKey(a => a.CustomerId);
+
+        modelBuilder.Entity<Address>()
+    .Property(a => a.Label)
+    .HasMaxLength(50)
+    .IsRequired();
+
+        modelBuilder.Entity<Address>()
+            .Property(a => a.RecipientName)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        modelBuilder.Entity<Address>()
+            .Property(a => a.AddressLine1)
+            .HasMaxLength(200)
+            .IsRequired();
+
+        modelBuilder.Entity<Address>()
+            .Property(a => a.AddressLine2)
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<Address>()
+            .Property(a => a.City)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        modelBuilder.Entity<Address>()
+            .Property(a => a.Province)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        modelBuilder.Entity<Address>()
+            .Property(a => a.PostalCode)
+            .HasMaxLength(20)
+            .IsRequired();
+
+        modelBuilder.Entity<Address>()
+            .Property(a => a.Country)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        modelBuilder.Entity<Address>()
+            .Property(a => a.PhoneNumber)
+            .HasMaxLength(30);
 
         modelBuilder.Entity<Order>()
             .HasIndex(o => o.CustomerId);

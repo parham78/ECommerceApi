@@ -21,6 +21,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection("Jwt"));

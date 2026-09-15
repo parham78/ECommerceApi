@@ -89,6 +89,17 @@ public class GlobalExceptionHandler : IExceptionHandler
 
             return true;
         }
+        if (exception is AddressNotFoundException)
+        {
+            httpContext.Response.StatusCode =
+                StatusCodes.Status404NotFound;
+
+            await httpContext.Response.WriteAsJsonAsync(
+                new { message = exception.Message },
+                cancellationToken);
+
+            return true;
+        }
 
         httpContext.Response.StatusCode =
             StatusCodes.Status500InternalServerError;
