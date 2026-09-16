@@ -9,6 +9,8 @@ public class OrderManagementDbContext
     public DbSet<Customer> Customers { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Address> Addresses { get; set; }
+    public DbSet<Basket> Baskets { get; set; }
+    public DbSet<BasketItem> BasketItems { get; set; }
 
     public OrderManagementDbContext(
         DbContextOptions<OrderManagementDbContext> options)
@@ -47,7 +49,8 @@ public class OrderManagementDbContext
         modelBuilder.Entity<Address>()
         .HasOne(a => a.Customer)
         .WithMany(c => c.Addresses)
-        .HasForeignKey(a => a.CustomerId);
+        .HasForeignKey(a => a.CustomerId)
+        .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Address>()
     .Property(a => a.Label)
@@ -129,5 +132,39 @@ public class OrderManagementDbContext
             .WithMany(p => p.OrderItems)
             .HasForeignKey(oi => oi.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Customer 1 ---- 1 Basket
+        modelBuilder.Entity<Basket>()
+            .HasOne(b => b.Customer)
+            .WithOne()
+            .HasForeignKey<Basket>(b => b.CustomerId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Basket>()
+            .HasIndex(b => b.CustomerId)
+            .IsUnique();
+
+        // Basket 1 ---- many BasketItems
+        modelBuilder.Entity<BasketItem>()
+            .HasOne(bi => bi.Basket)
+            .WithMany(b => b.Items)
+            .HasForeignKey(bi => bi.BasketId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Product 1 ---- many BasketItems
+        modelBuilder.Entity<BasketItem>()
+            .HasOne(bi => bi.Product)
+            .WithMany()
+            .HasForeignKey(bi => bi.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Same product can appear only once in a basket
+        modelBuilder.Entity<BasketItem>()
+            .HasIndex(bi => new
+            {
+                bi.BasketId,
+                bi.ProductId
+            })
+            .IsUnique();
     }
 }
