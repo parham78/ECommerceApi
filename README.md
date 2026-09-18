@@ -1,192 +1,290 @@
-# Order Management API
+# ECommerceApi
 
-A backend Order Management and Ecommerce API built with C#, ASP.NET Core, Entity Framework Core, SQL Server, ASP.NET Core Identity, and JWT authentication.
+ECommerceApi is an ecommerce backend that I’m building with ASP.NET Core, Entity Framework Core, SQL Server, Identity, and JWT authentication.
 
-The system provides product, customer, inventory, and order-management capabilities with secure authentication, role-based authorization, customer ownership rules, concurrency handling, and structured API responses.
+The project is still under development. Right now the main customer flow from account creation to checkout is working.
 
-## Technologies
+## Tech Stack
 
-* C#
-* .NET 10
-* ASP.NET Core Web API
-* Entity Framework Core
-* SQL Server
-* ASP.NET Core Identity
-* JWT Bearer Authentication
-* REST APIs
-* LINQ
-* Swagger / OpenAPI
-* Git
+- C#
+- .NET 10
+- ASP.NET Core Web API
+- Entity Framework Core
+- SQL Server
+- ASP.NET Core Identity
+- JWT Authentication
+- Swagger / OpenAPI
+- Git / GitHub
 
-## Features
+## What is currently implemented
 
-### Authentication & Authorization
+### Authentication and users
 
-* User registration with ASP.NET Core Identity
-* Secure password hashing through Identity
-* JWT-based authentication
-* Customer and Admin roles
-* Role-based authorization
-* Admin account bootstrapping
-* Customer profiles linked to Identity users
-* Current authenticated user resolution
-* Customer resource ownership enforcement
-* Active/inactive customer validation
-* Admin-only management endpoints
-* Customer-specific `/api/me/...` endpoints
+- Customer registration
+- Login with JWT
+- ASP.NET Core Identity
+- Customer and Admin roles
+- Role-based authorization
+- Customer profile linked to the authenticated Identity user
+- Customer-specific `/api/me/...` endpoints
 
-### Order Management
+### Product catalog
 
-* Multi-item orders
-* Customer-owned order retrieval
-* Customer-owned order creation
-* Server-derived CustomerId for authenticated customers
-* Historical product price snapshots
-* Order total calculation
-* Pagination
-* Ownership-scoped pagination
-* Inventory validation
-* Stock deduction
-* Optimistic concurrency protection
+- Product creation and management
+- Public product catalog
+- Search
+- Price filtering
+- In-stock filtering
+- Sorting
+- Pagination
+- SKU support
+- Product activation/deactivation
+- Stock management
+- RowVersion concurrency protection
 
-### Product Management
+### Customer addresses
 
-* Product creation
-* Product lookup and filtering
-* Stock management
-* Product price management
-* Public product read endpoints
-* Admin-only product write operations
+Customers can manage their own saved addresses.
 
-### Customer Management
+- Create address
+- View addresses
+- Update address
+- Delete address
+- Default address handling
+- Ownership protection
 
-* Customer profiles
-* Unique customer email index
-* Identity user linkage
-* Active/inactive customer status
-* Admin-only customer management endpoints
+A customer cannot access another customer's addresses.
 
-### Data & Persistence
+### Shopping basket
 
-* Entity Framework Core
-* SQL Server
-* Code-first migrations
-* Relational database modeling
-* Foreign keys
-* One-to-one and one-to-many relationships
-* DTO-based API requests and responses
-* Asynchronous database operations
-* LINQ queries and projections
-* `AsNoTracking` read queries
+Each customer has one basket.
 
-### Reliability & Error Handling
+Customers can:
 
-* Global exception handling
-* HTTP `400 Bad Request`
-* HTTP `401 Unauthorized`
-* HTTP `403 Forbidden`
-* HTTP `404 Not Found`
-* HTTP `409 Conflict`
-* Optimistic concurrency using SQL Server `rowversion`
-* Concurrent stock-update protection
+- Add products
+- Change quantities
+- Remove individual items
+- Clear the basket
+- View current prices and availability
 
-## Database Relationships
+The basket uses the current product price instead of storing a historical price.
 
-```text
-ApplicationUser 1 ──── 0..1 Customer
+Stock is not reserved when a product is added to the basket. Stock is checked again during checkout.
 
-Customer 1 ──── * Order
+### Checkout
 
-Order 1 ──── * OrderItem
+The checkout flow is now working.
 
-Product 1 ──── * OrderItem
+A customer sends only the address they want to use:
+
+```json
+{
+  "addressId": 6
+}
 ```
 
-## Authorization Model
+The backend then:
+
+1. Gets the customer from the JWT
+2. Verifies the customer is active
+3. Verifies the address belongs to that customer
+4. Loads the customer's basket
+5. Checks that every product is still active
+6. Checks current stock
+7. Uses current product prices
+8. Creates the order
+9. Decreases inventory
+10. Creates OrderItem snapshots
+11. Saves a shipping-address snapshot
+12. Clears the basket items
+13. Commits everything in a database transaction
+
+The client does not send the customer ID, total price, basket ID, or product prices.
+
+### Orders
+
+Orders keep historical information instead of depending on the current product data.
+
+Each `OrderItem` stores:
+
+- Product name
+- SKU
+- Quantity
+- Unit price at the time of purchase
+
+Orders also store a copy of the shipping address used during checkout.
+
+This means that changing a product price or editing/deleting a saved address later does not change old orders.
+
+### Order status
+
+The order lifecycle currently supports:
 
 ```text
-Anonymous User
-    └── Public product reads
-
-Customer
-    └── /api/me/orders
-        ├── View own orders
-        ├── View own order by ID
-        └── Create orders for the authenticated customer
-
-Admin
-    ├── Order management
-    ├── Customer management
-    └── Product write operations
+Pending
+   ↓
+Processing
+   ↓
+Shipped
+   ↓
+Completed
 ```
 
-Customer-facing operations do not trust a client-supplied `CustomerId`.
+Pending orders can also be cancelled.
 
-Instead, ownership is resolved from the authenticated identity:
+When an order is cancelled, its product quantities are restored to inventory.
+
+Invalid status changes are rejected.
+
+## Checkout safety
+
+Some of the checkout rules I have tested so far:
+
+- Empty basket → rejected
+- Address owned by another customer → rejected
+- Inactive product → rejected
+- Insufficient stock → rejected
+- Failed checkout validation does not clear the basket
+- Successful checkout decreases stock
+- Successful checkout clears BasketItems but keeps the Basket
+- Shipping information remains available when the order is retrieved later
+
+EF Core concurrency handling is also used for product stock changes.
+
+## Project structure
+
+The API currently follows a simple layered structure:
 
 ```text
-JWT
-↓
-ApplicationUser ID
-↓
-Customer profile
-↓
-Customer ID
-↓
-Owned resources
+Controllers
+    ↓
+Services
+    ↓
+Entity Framework Core
+    ↓
+SQL Server
 ```
 
-This prevents customers from creating or accessing orders on behalf of another customer.
+DTOs are used for API requests and responses instead of exposing everything directly from the database models.
 
-## Project Structure
+Business logic is mainly kept inside the service layer, while controllers stay relatively small.
+
+## Main customer flow
 
 ```text
-Controllers/
-Data/
-Dtos/
-Exceptions/
-Migrations/
-Models/
-Options/
-Services/
+Register
+   ↓
+Login
+   ↓
+Browse Products
+   ↓
+Add Products to Basket
+   ↓
+Manage Address
+   ↓
+Checkout
+   ↓
+Order Created
+   ↓
+View Order History
 ```
 
-## Current Status
+## Database relationships
 
-The API currently includes:
+The main data relationships are:
 
-* Product, customer, and order management
-* Multi-item orders
-* Inventory management
-* Entity Framework Core persistence
-* JWT authentication
-* ASP.NET Core Identity
-* Customer and Admin roles
-* Customer ownership authorization
-* Admin endpoint protection
-* Optimistic concurrency handling
-* Global exception handling
-* Pagination and DTO projections
+- A user account is linked to one customer profile.
+- A customer can have multiple orders and addresses.
+- Each customer has one basket.
+- A basket contains multiple basket items.
+- Each basket item points to a product.
+- An order contains multiple order items.
+- Each order item keeps a snapshot of the product information at the time of purchase.
 
-## Roadmap
+## API examples
 
-* Controlled order lifecycle and state transitions
-* Product catalog and categories
-* Shopping basket/cart
-* Customer addresses
-* Checkout workflow
-* Transaction and idempotency handling
-* Payment integration
-* Admin operations and dashboard APIs
-* Unit testing
-* Integration testing
-* CI/CD pipelines
-* Azure DevOps
-* YAML pipelines
-* Docker
-* Cloud deployment
-* Additional production hardening
+Some of the current endpoints include:
 
+```text
+POST   /api/auth/register
+POST   /api/auth/login
 
+GET    /api/products
 
+GET    /api/me/addresses
+POST   /api/me/addresses
+PUT    /api/me/addresses/{id}
+DELETE /api/me/addresses/{id}
 
+GET    /api/me/basket
+POST   /api/me/basket/items
+PATCH  /api/me/basket/items/{itemId}
+DELETE /api/me/basket/items/{itemId}
+DELETE /api/me/basket/items
+
+POST   /api/me/checkout
+
+GET    /api/me/orders
+GET    /api/me/orders/{id}
+PATCH  /api/me/orders/{id}/cancel
+```
+
+There are also Admin-protected endpoints for managing products and orders.
+
+## Running the project locally
+
+The project requires:
+
+- .NET 10 SDK
+- SQL Server
+- EF Core tools
+
+Clone the repository:
+
+```bash
+git clone https://github.com/parham78/ECommerceApi.git
+```
+
+Go into the project:
+
+```bash
+cd ECommerceApi
+```
+
+Restore packages:
+
+```bash
+dotnet restore
+```
+
+Apply the EF Core migrations:
+
+```bash
+dotnet ef database update
+```
+
+Run the API:
+
+```bash
+dotnet run
+```
+
+The project also uses User Secrets for sensitive configuration such as JWT settings and bootstrap credentials, so secrets are not stored directly in the repository.
+
+## What I'm working on next
+
+The next parts of the project are:
+
+- Checkout idempotency
+- More concurrency testing
+- Payment integration
+- Admin operations
+- Unit tests
+- Integration tests
+- Logging and production configuration
+- Docker
+- CI/CD
+- Deployment
+- Angular frontend
+
+The Angular frontend will use this API for the customer ecommerce flow and later for the admin side as well.
