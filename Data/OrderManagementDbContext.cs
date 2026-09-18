@@ -107,6 +107,38 @@ public class OrderManagementDbContext
     .Property(o => o.Status)
     .HasConversion<string>();
 
+        modelBuilder.Entity<Order>()
+        .Property(o => o.ShippingRecipientName)
+        .HasMaxLength(100);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.ShippingAddressLine1)
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.ShippingAddressLine2)
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.ShippingCity)
+            .HasMaxLength(100);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.ShippingProvince)
+            .HasMaxLength(100);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.ShippingPostalCode)
+            .HasMaxLength(20);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.ShippingCountry)
+            .HasMaxLength(100);
+
+        modelBuilder.Entity<Order>()
+            .Property(o => o.ShippingPhoneNumber)
+            .HasMaxLength(30);
+
         // OrderItem historical price
         modelBuilder.Entity<OrderItem>()
             .Property(oi => oi.UnitPrice)

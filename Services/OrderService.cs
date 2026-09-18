@@ -50,6 +50,14 @@ public class OrderService : IOrderService
                 TotalPrice = o.TotalPrice,
                 Status = o.Status,
                 CreatedAt = o.CreatedAt,
+                ShippingRecipientName = o.ShippingRecipientName,
+                ShippingAddressLine1 = o.ShippingAddressLine1,
+                ShippingAddressLine2 = o.ShippingAddressLine2,
+                ShippingCity = o.ShippingCity,
+                ShippingProvince = o.ShippingProvince,
+                ShippingPostalCode = o.ShippingPostalCode,
+                ShippingCountry = o.ShippingCountry,
+                ShippingPhoneNumber = o.ShippingPhoneNumber,
 
                 Items = o.OrderItems
                     .Select(oi => new OrderItemResponseDto
@@ -124,6 +132,14 @@ public class OrderService : IOrderService
                 TotalPrice = o.TotalPrice,
                 Status = o.Status,
                 CreatedAt = o.CreatedAt,
+                ShippingRecipientName = o.ShippingRecipientName,
+                ShippingAddressLine1 = o.ShippingAddressLine1,
+                ShippingAddressLine2 = o.ShippingAddressLine2,
+                ShippingCity = o.ShippingCity,
+                ShippingProvince = o.ShippingProvince,
+                ShippingPostalCode = o.ShippingPostalCode,
+                ShippingCountry = o.ShippingCountry,
+                ShippingPhoneNumber = o.ShippingPhoneNumber,
 
                 Items = o.OrderItems
                     .Select(oi => new OrderItemResponseDto
@@ -177,6 +193,15 @@ public class OrderService : IOrderService
                 TotalPrice = o.TotalPrice,
                 Status = o.Status,
                 CreatedAt = o.CreatedAt,
+                ShippingRecipientName = o.ShippingRecipientName,
+                ShippingAddressLine1 = o.ShippingAddressLine1,
+                ShippingAddressLine2 = o.ShippingAddressLine2,
+                ShippingCity = o.ShippingCity,
+                ShippingProvince = o.ShippingProvince,
+                ShippingPostalCode = o.ShippingPostalCode,
+                ShippingCountry = o.ShippingCountry,
+                ShippingPhoneNumber = o.ShippingPhoneNumber,
+
 
                 Items = o.OrderItems
                     .Select(oi => new OrderItemResponseDto
@@ -216,6 +241,14 @@ public class OrderService : IOrderService
                 TotalPrice = o.TotalPrice,
                 Status = o.Status,
                 CreatedAt = o.CreatedAt,
+                ShippingRecipientName = o.ShippingRecipientName,
+                ShippingAddressLine1 = o.ShippingAddressLine1,
+                ShippingAddressLine2 = o.ShippingAddressLine2,
+                ShippingCity = o.ShippingCity,
+                ShippingProvince = o.ShippingProvince,
+                ShippingPostalCode = o.ShippingPostalCode,
+                ShippingCountry = o.ShippingCountry,
+                ShippingPhoneNumber = o.ShippingPhoneNumber,
 
                 Items = o.OrderItems
                     .Select(oi => new OrderItemResponseDto
