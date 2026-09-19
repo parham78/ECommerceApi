@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
-
+using Microsoft.EntityFrameworkCore;
 
 public class ProductService : IProductService
 {
@@ -11,15 +9,16 @@ public class ProductService : IProductService
     {
         _context = context;
     }
-    public async Task<PagedResultDto<Product>> GetAll(
-    string? search,
-    decimal? minPrice,
-    decimal? maxPrice,
-    bool? inStock,
-    string? sortBy,
-    string? sortDirection,
-    int page,
-    int pageSize)
+
+    public async Task<PagedResultDto<ProductResponseDto>> GetAll(
+        string? search,
+        decimal? minPrice,
+        decimal? maxPrice,
+        bool? inStock,
+        string? sortBy,
+        string? sortDirection,
+        int page,
+        int pageSize)
     {
         if (page < 1)
         {
@@ -35,10 +34,11 @@ public class ProductService : IProductService
         {
             pageSize = 100;
         }
+
         var query = _context.Products
-    .AsNoTracking()
-    .Where(p => p.IsActive)
-    .AsQueryable();
+            .AsNoTracking()
+            .Where(p => p.IsActive)
+            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -108,9 +108,17 @@ public class ProductService : IProductService
         var products = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .Select(p => new ProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Sku = p.Sku,
+                Price = p.Price,
+                Stock = p.Stock
+            })
             .ToListAsync();
 
-        return new PagedResultDto<Product>
+        return new PagedResultDto<ProductResponseDto>
         {
             Items = products,
             CurrentPage = page,
@@ -120,10 +128,12 @@ public class ProductService : IProductService
                 totalCount / (double)pageSize)
         };
     }
-    public async Task<PagedResultDto<Product>> GetAllForAdmin(
-    bool? isActive,
-    int page,
-    int pageSize)
+
+    public async Task<PagedResultDto<AdminProductResponseDto>>
+        GetAllForAdmin(
+            bool? isActive,
+            int page,
+            int pageSize)
     {
         if (page < 1)
         {
@@ -156,9 +166,19 @@ public class ProductService : IProductService
             .OrderBy(p => p.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .Select(p => new AdminProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Sku = p.Sku,
+                Price = p.Price,
+                Stock = p.Stock,
+                IsActive = p.IsActive,
+                RowVersion = p.RowVersion
+            })
             .ToListAsync();
 
-        return new PagedResultDto<Product>
+        return new PagedResultDto<AdminProductResponseDto>
         {
             Items = products,
             CurrentPage = page,
@@ -168,13 +188,23 @@ public class ProductService : IProductService
                 totalCount / (double)pageSize)
         };
     }
-    public async Task<Product> GetById(int id)
+
+    public async Task<ProductResponseDto> GetById(int id)
     {
         var product = await _context.Products
             .AsNoTracking()
-            .FirstOrDefaultAsync(p =>
-             p.Id == id &&
-             p.IsActive);
+            .Where(p =>
+                p.Id == id &&
+                p.IsActive)
+            .Select(p => new ProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Sku = p.Sku,
+                Price = p.Price,
+                Stock = p.Stock
+            })
+            .FirstOrDefaultAsync();
 
         if (product is null)
         {
@@ -184,11 +214,24 @@ public class ProductService : IProductService
 
         return product;
     }
-    public async Task<Product> GetByIdForAdmin(int id)
+
+    public async Task<AdminProductResponseDto>
+        GetByIdForAdmin(int id)
     {
         var product = await _context.Products
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .Where(p => p.Id == id)
+            .Select(p => new AdminProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Sku = p.Sku,
+                Price = p.Price,
+                Stock = p.Stock,
+                IsActive = p.IsActive,
+                RowVersion = p.RowVersion
+            })
+            .FirstOrDefaultAsync();
 
         if (product is null)
         {
@@ -198,42 +241,17 @@ public class ProductService : IProductService
 
         return product;
     }
-    public async Task<Product> GetByName(string name)
-    {
-        var product = await _context.Products
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p =>
-    p.Name == name &&
-    p.IsActive);
 
-        if (product is null)
-        {
-            throw new ProductNotFoundException(
-                $"Product '{name}' was not found.");
-        }
-
-        return product;
-    }
-    public async Task<List<Product>> GetExpensiveProducts(decimal minimumPrice)
-    {
-        var products = await _context.Products
-       .AsNoTracking()
-       .Where(p =>
-    p.IsActive &&
-    p.Price > minimumPrice)
-       .OrderBy(p => p.Price)
-    .ToListAsync();
-
-        return products;
-    }
-    public async Task<Product> Create(CreateProductRequestDto dto)
+    public async Task<AdminProductResponseDto> Create(
+        CreateProductRequestDto dto)
     {
         var normalizedSku = dto.Sku
             .Trim()
             .ToUpperInvariant();
 
         var skuExists = await _context.Products
-            .AnyAsync(p => p.Sku.ToUpper() == normalizedSku);
+            .AnyAsync(p =>
+                p.Sku.ToUpper() == normalizedSku);
 
         if (skuExists)
         {
@@ -266,13 +284,15 @@ public class ProductService : IProductService
                 ex);
         }
 
-        return product;
+        return ToAdminResponseDto(product);
     }
-    public async Task<Product> UpdateStock(
-    int id,
-    UpdateStockRequestDto dto)
+
+    public async Task<AdminProductResponseDto> UpdateStock(
+        int id,
+        UpdateStockRequestDto dto)
     {
-        var product = await _context.Products.FindAsync(id);
+        var product = await _context.Products
+            .FindAsync(id);
 
         if (product is null)
         {
@@ -296,11 +316,13 @@ public class ProductService : IProductService
                 "The product stock was changed by another request. Reload it and try again.");
         }
 
-        return product;
+        return ToAdminResponseDto(product);
     }
+
     public async Task Delete(int id)
     {
-        var product = await _context.Products.FindAsync(id);
+        var product = await _context.Products
+            .FindAsync(id);
 
         if (product is null)
         {
@@ -320,30 +342,31 @@ public class ProductService : IProductService
                 "The product was modified or deleted by another request. Reload it and try again.");
         }
         catch (DbUpdateException ex) when (
-            ex.InnerException is SqlException sqlException
-            && sqlException.Number == 547)
+            ex.InnerException is SqlException sqlException &&
+            sqlException.Number == 547)
         {
             throw new ConflictException(
                 "This product cannot be deleted because it is used in an order.",
                 ex);
         }
     }
-    public async Task<Product> Update(
-    int id,
-    UpdateProductRequestDto dto)
+
+    public async Task<AdminProductResponseDto> Update(
+        int id,
+        UpdateProductRequestDto dto)
     {
         var product = await _context.Products
             .FirstOrDefaultAsync(p => p.Id == id);
 
-        if (product == null)
+        if (product is null)
         {
             throw new ProductNotFoundException(
                 $"Product {id} was not found.");
         }
 
         var normalizedSku = dto.Sku
-    .Trim()
-    .ToUpperInvariant();
+            .Trim()
+            .ToUpperInvariant();
 
         var skuExists = await _context.Products
             .AnyAsync(p =>
@@ -355,9 +378,10 @@ public class ProductService : IProductService
             throw new ConflictException(
                 $"A product with SKU '{normalizedSku}' already exists.");
         }
+
         _context.Entry(product)
-        .Property(p => p.RowVersion)
-        .OriginalValue = dto.RowVersion;
+            .Property(p => p.RowVersion)
+            .OriginalValue = dto.RowVersion;
 
         product.Name = dto.Name;
         product.Sku = normalizedSku;
@@ -374,16 +398,30 @@ public class ProductService : IProductService
                 "The product was changed by another request. Please try again.");
         }
         catch (DbUpdateException ex) when (
-    ex.InnerException is SqlException sqlException &&
-    (sqlException.Number == 2601 ||
-     sqlException.Number == 2627))
+            ex.InnerException is SqlException sqlException &&
+            (sqlException.Number == 2601 ||
+             sqlException.Number == 2627))
         {
             throw new ConflictException(
                 $"A product with SKU '{normalizedSku}' already exists.",
                 ex);
         }
 
-        return product;
+        return ToAdminResponseDto(product);
     }
 
+    private static AdminProductResponseDto ToAdminResponseDto(
+        Product product)
+    {
+        return new AdminProductResponseDto
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Sku = product.Sku,
+            Price = product.Price,
+            Stock = product.Stock,
+            IsActive = product.IsActive,
+            RowVersion = product.RowVersion
+        };
+    }
 }

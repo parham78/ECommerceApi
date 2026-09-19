@@ -68,24 +68,8 @@ public class ProductsController : ControllerBase
     }
 
 
-    [HttpGet("name/{name}")]
-    public async Task<IActionResult> GetByName(string name)
-    {
-        var product = await _productService.GetByName(name);
-
-        return Ok(product);
-    }
 
 
-    [HttpGet("expensive")]
-    public async Task<IActionResult> GetExpensiveProducts(
-        decimal minimumPrice)
-    {
-        var products =
-            await _productService.GetExpensiveProducts(minimumPrice);
-
-        return Ok(products);
-    }
 
 
     [HttpPost]

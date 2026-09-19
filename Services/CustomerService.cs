@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 public class CustomerService : ICustomerService
 {
@@ -10,18 +10,33 @@ public class CustomerService : ICustomerService
         _context = context;
     }
 
-    public async Task<List<Customer>> GetAll()
+    public async Task<List<CustomerResponseDto>> GetAll()
     {
         return await _context.Customers
             .AsNoTracking()
+            .Select(c => new CustomerResponseDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Email = c.Email,
+                IsActive = c.IsActive
+            })
             .ToListAsync();
     }
 
-    public async Task<Customer> GetById(int id)
+    public async Task<CustomerResponseDto> GetById(int id)
     {
         var customer = await _context.Customers
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .Where(c => c.Id == id)
+            .Select(c => new CustomerResponseDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Email = c.Email,
+                IsActive = c.IsActive
+            })
+            .FirstOrDefaultAsync();
 
         if (customer is null)
         {
@@ -32,8 +47,8 @@ public class CustomerService : ICustomerService
         return customer;
     }
 
-    public async Task<Customer> Create(
-    CreateCustomerRequestDto dto)
+    public async Task<CustomerResponseDto> Create(
+        CreateCustomerRequestDto dto)
     {
         var customer = new Customer
         {
@@ -49,9 +64,10 @@ public class CustomerService : ICustomerService
             await _context.SaveChangesAsync();
         }
         catch (DbUpdateException ex) when (
-            ex.InnerException is SqlException sqlException
-            && (sqlException.Number == 2601 || sqlException.Number == 2627)
-            && sqlException.Message.Contains(
+            ex.InnerException is SqlException sqlException &&
+            (sqlException.Number == 2601 ||
+             sqlException.Number == 2627) &&
+            sqlException.Message.Contains(
                 "IX_Customers_Email",
                 StringComparison.Ordinal))
         {
@@ -60,6 +76,18 @@ public class CustomerService : ICustomerService
                 ex);
         }
 
-        return customer;
+        return ToResponseDto(customer);
+    }
+
+    private static CustomerResponseDto ToResponseDto(
+        Customer customer)
+    {
+        return new CustomerResponseDto
+        {
+            Id = customer.Id,
+            Name = customer.Name,
+            Email = customer.Email,
+            IsActive = customer.IsActive
+        };
     }
 }

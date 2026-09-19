@@ -27,8 +27,15 @@ builder.Services.AddScoped<IBasketService, BasketService>();
 builder.Services.AddScoped<
     ICheckoutService,
     CheckoutService>();
-builder.Services.Configure<JwtOptions>(
-    builder.Configuration.GetSection("Jwt"));
+builder.Services
+    .AddOptions<JwtOptions>()
+    .Bind(builder.Configuration.GetSection("Jwt"))
+    .ValidateDataAnnotations()
+    .Validate(
+        options =>
+            Encoding.UTF8.GetByteCount(options.Key) >= 32,
+        "Jwt:Key must be at least 32 bytes long.")
+    .ValidateOnStart();
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

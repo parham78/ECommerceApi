@@ -275,138 +275,13 @@ public class OrderService : IOrderService
     }
 
 
-    public async Task<OrderResponseDto> Create(
-        CreateOrderRequestDto dto)
-    {
-        var customerExists = await _context.Customers
-            .AnyAsync(c => c.Id == dto.CustomerId);
-
-        if (!customerExists)
-        {
-            throw new CustomerNotFoundException(
-                $"Customer {dto.CustomerId} was not found.");
-        }
-
-        return await CreateForCustomer(
-            dto.CustomerId,
-            dto.Items);
-    }
 
 
-    public async Task<OrderResponseDto> CreateMyOrder(
-        CreateMyOrderRequestDto dto)
-    {
-        var customerId =
-            await _currentUserService.GetCustomerId();
-
-        if (customerId == null)
-        {
-            throw new CustomerNotFoundException(
-                "No customer profile is linked to the current user.");
-        }
-
-        var isActive = await _context.Customers
-            .AnyAsync(c =>
-                c.Id == customerId.Value &&
-                c.IsActive);
-
-        if (!isActive)
-        {
-            throw new BadRequestException(
-                "This customer account is inactive.");
-        }
-
-        return await CreateForCustomer(
-            customerId.Value,
-            dto.Items);
-    }
 
 
-    private async Task<OrderResponseDto> CreateForCustomer(
-        int customerId,
-        List<OrderItemRequestDto> items)
-    {
-        var productIds = items
-            .Select(i => i.ProductId)
-            .ToList();
 
-        if (productIds.Distinct().Count() != productIds.Count)
-        {
-            throw new BadRequestException(
-                "The same product cannot appear twice in an order.");
-        }
 
-        var products = await _context.Products
-            .Where(p => productIds.Contains(p.Id))
-            .ToDictionaryAsync(p => p.Id);
 
-        foreach (var itemDto in items)
-        {
-            if (!products.ContainsKey(itemDto.ProductId))
-            {
-                throw new ProductNotFoundException(
-                    $"Product {itemDto.ProductId} was not found.");
-            }
-        }
-
-        var order = new Order
-        {
-            CustomerId = customerId,
-            Status = OrderStatus.Pending,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        decimal totalPrice = 0;
-
-        foreach (var itemDto in items)
-        {
-            var product = products[itemDto.ProductId];
-
-            if (!product.IsActive)
-            {
-                throw new BadRequestException(
-                    $"Product {product.Id} is not currently available.");
-            }
-
-            if (product.Stock < itemDto.Quantity)
-            {
-                throw new InsufficientStockException(
-                    $"Not enough stock for product {product.Name}.");
-            }
-
-            product.Stock -= itemDto.Quantity;
-
-            var orderItem = new OrderItem
-            {
-                ProductId = product.Id,
-                Quantity = itemDto.Quantity,
-                UnitPrice = product.Price,
-                ProductName = product.Name,
-                ProductSku = product.Sku
-            };
-
-            order.OrderItems.Add(orderItem);
-
-            totalPrice +=
-                itemDto.Quantity * product.Price;
-        }
-
-        order.TotalPrice = totalPrice;
-
-        _context.Orders.Add(order);
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            throw new ConcurrencyConflictException(
-                "One or more products were modified by another request.");
-        }
-
-        return await GetById(order.Id);
-    }
 
 
     private static bool IsValidStatusTransition(

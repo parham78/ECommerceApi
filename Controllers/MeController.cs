@@ -35,14 +35,6 @@ public class MeController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("orders")]
-    public async Task<IActionResult> CreateMyOrder(
-    CreateMyOrderRequestDto dto)
-    {
-        var result = await _orderService.CreateMyOrder(dto);
-
-        return Ok(result);
-    }
 
     [HttpPatch("orders/{id}/cancel")]
     public async Task<IActionResult> CancelMyOrder(int id)
