@@ -22,4 +22,36 @@ public class OrderStatusRulesTests
         // Assert
         Assert.Equal(expected, result);
     }
+
+    [Theory]
+    [InlineData(OrderStatus.Pending, true)]
+    [InlineData(OrderStatus.Processing, false)]
+    [InlineData(OrderStatus.Shipped, false)]
+    [InlineData(OrderStatus.Completed, false)]
+    public void CanCancel_ReturnsExpectedResult(
+    OrderStatus status,
+    bool expected)
+    {
+        // Act
+        var result = OrderStatusRules.CanCancel(status);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+
+    [Fact]
+    public void EnsureValidTransition_PendingToCompleted_ThrowsBadRequestException()
+    {
+        // Act
+        var exception = Assert.Throws<BadRequestException>(() =>
+            OrderStatusRules.EnsureValidTransition(
+                OrderStatus.Pending,
+                OrderStatus.Completed));
+
+        // Assert
+        Assert.Contains(
+            "Cannot change order status",
+            exception.Message);
+    }
 }

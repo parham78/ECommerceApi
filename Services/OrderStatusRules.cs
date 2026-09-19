@@ -21,4 +21,19 @@ public static class OrderStatusRules
 
         return false;
     }
+    public static bool CanCancel(OrderStatus status)
+    {
+        return status == OrderStatus.Pending;
+    }
+
+    public static void EnsureValidTransition(
+    OrderStatus currentStatus,
+    OrderStatus newStatus)
+    {
+        if (!CanTransition(currentStatus, newStatus))
+        {
+            throw new BadRequestException(
+                $"Cannot change order status from {currentStatus} to {newStatus}.");
+        }
+    }
 }
