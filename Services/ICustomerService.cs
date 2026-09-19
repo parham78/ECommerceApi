@@ -1,8 +1,9 @@
 public interface ICustomerService
 {
-    Task<List<Customer>> GetAll();
+    Task<List<CustomerResponseDto>> GetAll();
 
-    Task<Customer> GetById(int id);
+    Task<CustomerResponseDto> GetById(int id);
 
-    Task<Customer> Create(CreateCustomerRequestDto dto);
+    Task<CustomerResponseDto> Create(
+        CreateCustomerRequestDto dto);
 }
