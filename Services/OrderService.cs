@@ -284,27 +284,7 @@ public class OrderService : IOrderService
 
 
 
-    private static bool IsValidStatusTransition(
-        OrderStatus currentStatus,
-        OrderStatus newStatus)
-    {
-        if (currentStatus == OrderStatus.Pending)
-        {
-            return newStatus == OrderStatus.Processing;
-        }
 
-        if (currentStatus == OrderStatus.Processing)
-        {
-            return newStatus == OrderStatus.Shipped;
-        }
-
-        if (currentStatus == OrderStatus.Shipped)
-        {
-            return newStatus == OrderStatus.Completed;
-        }
-
-        return false;
-    }
 
 
     public async Task<OrderResponseDto> ChangeStatus(
@@ -321,9 +301,9 @@ public class OrderService : IOrderService
         }
 
         var isValidTransition =
-            IsValidStatusTransition(
-                order.Status,
-                dto.Status);
+    OrderStatusRules.CanTransition(
+        order.Status,
+        dto.Status);
 
         if (!isValidTransition)
         {
