@@ -5,6 +5,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>068fd0d3-f72e-4c60-a1ab-f6ee0e569ced</UserSecretsId>
+
+    <DefaultItemExcludes>
+      $(DefaultItemExcludes);OrderManagementApi.UnitTests/**
+    </DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>

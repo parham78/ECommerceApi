@@ -284,32 +284,12 @@ public class OrderService : IOrderService
 
 
 
-    private static bool IsValidStatusTransition(
-        OrderStatus currentStatus,
-        OrderStatus newStatus)
-    {
-        if (currentStatus == OrderStatus.Pending)
-        {
-            return newStatus == OrderStatus.Processing;
-        }
 
-        if (currentStatus == OrderStatus.Processing)
-        {
-            return newStatus == OrderStatus.Shipped;
-        }
-
-        if (currentStatus == OrderStatus.Shipped)
-        {
-            return newStatus == OrderStatus.Completed;
-        }
-
-        return false;
-    }
 
 
     public async Task<OrderResponseDto> ChangeStatus(
-        int id,
-        ChangeOrderStatusRequestDto dto)
+    int id,
+    ChangeOrderStatusRequestDto dto)
     {
         var order = await _context.Orders
             .FirstOrDefaultAsync(o => o.Id == id);
@@ -320,16 +300,9 @@ public class OrderService : IOrderService
                 $"Order {id} was not found.");
         }
 
-        var isValidTransition =
-            IsValidStatusTransition(
-                order.Status,
-                dto.Status);
-
-        if (!isValidTransition)
-        {
-            throw new BadRequestException(
-                $"Cannot change order status from {order.Status} to {dto.Status}.");
-        }
+        OrderStatusRules.EnsureValidTransition(
+            order.Status,
+            dto.Status);
 
         order.Status = dto.Status;
 
@@ -351,7 +324,7 @@ public class OrderService : IOrderService
                 $"Order {id} was not found.");
         }
 
-        if (order.Status != OrderStatus.Pending)
+        if (!OrderStatusRules.CanCancel(order.Status))
         {
             throw new BadRequestException(
                 "Only pending orders can be cancelled.");

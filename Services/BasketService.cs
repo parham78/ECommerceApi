@@ -61,7 +61,9 @@ public class BasketService : IBasketService
 
         if (existingItem == null)
         {
-            if (dto.Quantity > product.Stock)
+            if (BasketRules.ExceedsStock(
+                dto.Quantity,
+                product.Stock))
             {
                 throw new BadRequestException(
                     $"Only {product.Stock} units of product {product.Id} are currently available.");
@@ -76,15 +78,20 @@ public class BasketService : IBasketService
         else
         {
             var newQuantity =
-                existingItem.Quantity + dto.Quantity;
+                BasketRules.CalculateNewQuantity(
+                    existingItem.Quantity,
+                    dto.Quantity);
 
-            if (newQuantity > 100)
+            if (BasketRules.ExceedsMaximumQuantity(
+                newQuantity))
             {
                 throw new BadRequestException(
                     "Basket item quantity cannot exceed 100.");
             }
 
-            if (newQuantity > product.Stock)
+            if (BasketRules.ExceedsStock(
+                newQuantity,
+                product.Stock))
             {
                 throw new BadRequestException(
                     $"Only {product.Stock} units of product {product.Id} are currently available.");
@@ -123,7 +130,9 @@ public class BasketService : IBasketService
                 $"Product {basketItem.ProductId} is not currently available.");
         }
 
-        if (dto.Quantity > basketItem.Product.Stock)
+        if (BasketRules.ExceedsStock(
+            dto.Quantity,
+            basketItem.Product.Stock))
         {
             throw new BadRequestException(
                 $"Only {basketItem.Product.Stock} units of product {basketItem.ProductId} are currently available.");
