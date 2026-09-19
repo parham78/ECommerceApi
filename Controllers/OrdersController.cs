@@ -33,19 +33,7 @@ public class OrdersController : ControllerBase
         return Ok(order);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateOrder(
-        CreateOrderRequestDto dto)
-    {
-        var createdOrder =
-            await _orderService.Create(dto);
 
-        return CreatedAtAction(
-            nameof(GetOrderById),
-            new { id = createdOrder.Id },
-            createdOrder
-        );
-    }
 
 
 

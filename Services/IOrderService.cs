@@ -7,11 +7,10 @@ public interface IOrderService
     int page,
     int pageSize);
     Task<OrderResponseDto> GetMyOrderById(int id);
-    Task<OrderResponseDto> CreateMyOrder(
-    CreateMyOrderRequestDto dto);
+
 
     Task<OrderResponseDto> GetById(int id);
-    Task<OrderResponseDto> Create(CreateOrderRequestDto dto);
+
     Task<OrderResponseDto> ChangeStatus(
         int id,
         ChangeOrderStatusRequestDto dto);
