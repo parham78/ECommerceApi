@@ -1,20 +1,28 @@
 <header class="store-header">
   <div class="store-header__inner">
-    <a class="store-header__brand" routerLink="/products"> Supply </a>
+    <a class="store-header__brand" routerLink="/" aria-label="Supply home">
+      <img src="/images/brand/supply-logo.png" alt="Supply" />
+    </a>
+
+    <nav class="store-header__nav" aria-label="Main navigation">
+      <a class="store-header__nav-link" routerLink="/products"> Shop </a>
+
+      @if (authSession.isAuthenticated() && authSession.roles().includes('Customer')) {
+        <a class="store-header__nav-link" routerLink="/basket"> Basket </a>
+      }
+    </nav>
 
     <div class="store-header__account">
       @if (authSession.isAuthenticated()) {
-        @if (authSession.roles().includes('Customer')) {
-          <a class="store-header__action" routerLink="/basket"> Basket </a>
-        }
-
         <span class="store-header__email">
           {{ authSession.email() }}
         </span>
 
-        <button type="button" class="store-header__action" (click)="signOut()">Sign out</button>
+        <button type="button" class="store-header__account-action" (click)="signOut()">
+          Sign out
+        </button>
       } @else {
-        <a class="store-header__action" routerLink="/login"> Sign in </a>
+        <a class="store-header__account-action" routerLink="/login"> Sign in </a>
       }
     </div>
   </div>
