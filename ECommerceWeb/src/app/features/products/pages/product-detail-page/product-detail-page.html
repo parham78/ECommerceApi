@@ -43,6 +43,37 @@
         } @else {
           <p class="product-detail__stock product-detail__stock--out">Out of stock</p>
         }
+
+        @if (!authSession.isAuthenticated()) {
+          <a class="product-detail__basket-action" routerLink="/login">
+            Sign in to add to basket
+          </a>
+        } @else if (authSession.roles().includes('Customer')) {
+          <button
+            type="button"
+            class="product-detail__basket-action"
+            [disabled]="product.stock <= 0 || isAddingToBasket()"
+            (click)="addToBasket()"
+          >
+            @if (isAddingToBasket()) {
+              Adding...
+            } @else {
+              Add to basket
+            }
+          </button>
+        }
+
+        @if (basketMessage()) {
+          <p class="product-detail__basket-message">
+            {{ basketMessage() }}
+          </p>
+        }
+
+        @if (basketError()) {
+          <p class="product-detail__basket-error">
+            {{ basketError() }}
+          </p>
+        }
       </div>
     </section>
   </div>

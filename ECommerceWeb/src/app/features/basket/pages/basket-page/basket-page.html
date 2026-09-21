@@ -1,0 +1,41 @@
+<section class="basket-page">
+  <h1>Your basket</h1>
+
+  @if (isLoading()) {
+    <p>Loading basket...</p>
+  } @else if (errorMessage()) {
+    <p>{{ errorMessage() }}</p>
+  } @else if (basket(); as basket) {
+    @if (basket.items.length === 0) {
+      <p>Your basket is empty.</p>
+    } @else {
+      @for (item of basket.items; track item.id) {
+        <article>
+          <h2>{{ item.productName }}</h2>
+
+          <p>SKU: {{ item.productSku }}</p>
+
+          <p>
+            {{ item.unitPrice | currency: 'CAD' }}
+            ×
+            {{ item.quantity }}
+          </p>
+
+          <p>
+            Line total:
+            {{ item.lineTotal | currency: 'CAD' }}
+          </p>
+
+          <p>Available stock: {{ item.availableStock }}</p>
+        </article>
+      }
+
+      <p>
+        <strong>
+          Total:
+          {{ basket.totalPrice | currency: 'CAD' }}
+        </strong>
+      </p>
+    }
+  }
+</section>

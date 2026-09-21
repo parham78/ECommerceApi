@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { guestGuard } from './features/auth/guards/guest-guard';
+import { customerGuard } from './features/auth/guards/customer-guard';
 
 export const routes: Routes = [
   {
@@ -36,6 +37,12 @@ export const routes: Routes = [
         canActivate: [guestGuard],
         loadComponent: () =>
           import('./features/auth/pages/register-page/register-page').then((m) => m.RegisterPage),
+      },
+      {
+        path: 'basket',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/basket/pages/basket-page/basket-page').then((m) => m.BasketPage),
       },
       {
         path: '**',
