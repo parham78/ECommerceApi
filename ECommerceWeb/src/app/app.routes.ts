@@ -16,6 +16,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/products/pages/catalog-page/catalog-page').then((m) => m.CatalogPage),
       },
+      {
+        path: '**',
+        loadComponent: () =>
+          import('./system/not-found-page/not-found-page').then((m) => m.NotFoundPage),
+      },
     ],
   },
 ];

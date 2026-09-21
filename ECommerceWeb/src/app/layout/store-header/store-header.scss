@@ -4,8 +4,10 @@
 }
 
 .store-header__inner {
+  width: 100%;
   max-width: var(--content-max-width);
-  min-height: 64px;
+  min-height: 68px;
+
   margin: 0 auto;
   padding: 0 var(--space-4);
 
@@ -14,9 +16,11 @@
 }
 
 .store-header__brand {
+  color: var(--color-text);
+
   font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 750;
+  letter-spacing: -0.03em;
 }
 
 @media (min-width: 640px) {

@@ -17,15 +17,20 @@
   </div>
 
   @if (isLoading()) {
-    <p role="status">Loading products...</p>
+    <div class="catalog-state" role="status">
+      <p>Loading products...</p>
+    </div>
   } @else if (errorMessage()) {
-    <div role="alert">
+    <div class="catalog-state catalog-state--error" role="alert">
       <p>{{ errorMessage() }}</p>
 
       <button type="button" (click)="retry()">Retry</button>
     </div>
   } @else if (products().length === 0) {
-    <p>No products found.</p>
+    <div class="catalog-state">
+      <h2>No products found</h2>
+      <p>There are no products available for this page.</p>
+    </div>
   } @else {
     <div class="catalog-grid">
       @for (product of products(); track product.id) {

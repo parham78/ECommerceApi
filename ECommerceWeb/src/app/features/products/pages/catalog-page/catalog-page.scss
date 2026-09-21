@@ -1,7 +1,116 @@
+.catalog-page {
+  width: 100%;
+}
+
+.catalog-page__header {
+  margin-bottom: var(--space-12);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.catalog-page__eyebrow {
+  margin: 0 0 var(--space-2);
+
+  color: var(--color-action);
+
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.page-size {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.page-size select {
+  min-width: 96px;
+  min-height: 44px;
+
+  padding: 0 var(--space-3);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  cursor: pointer;
+}
+
+.page-size select:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .catalog-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-6);
+}
+
+.catalog-state {
+  padding: var(--space-10) var(--space-6);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+
+  text-align: center;
+}
+
+.catalog-state h2 {
+  margin: 0 0 var(--space-2);
+
+  font-size: 1.25rem;
+}
+
+.catalog-state p {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+}
+
+.catalog-state--error p {
+  margin: 0 0 var(--space-4);
+}
+
+.catalog-state--error button {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+
+  border: 0;
+  border-radius: var(--radius-control);
+
+  background: var(--color-action);
+  color: white;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.catalog-state--error button:hover {
+  background: var(--color-action-hover);
+}
+
+.catalog-state--error button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 @media (min-width: 400px) {
@@ -11,6 +120,12 @@
 }
 
 @media (min-width: 640px) {
+  .catalog-page__header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
   .catalog-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
