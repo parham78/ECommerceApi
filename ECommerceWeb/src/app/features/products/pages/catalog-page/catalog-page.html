@@ -1,0 +1,48 @@
+<section class="catalog-page">
+  <div class="catalog-page__header">
+    <div>
+      <p class="catalog-page__eyebrow">Catalog</p>
+      <h1>Products</h1>
+    </div>
+
+    <label class="page-size">
+      <span>Products per page</span>
+
+      <select #pageSizeSelect [value]="pageSize()" (change)="changePageSize(pageSizeSelect.value)">
+        <option value="12">12</option>
+        <option value="24">24</option>
+        <option value="48">48</option>
+      </select>
+    </label>
+  </div>
+
+  @if (isLoading()) {
+    <div class="catalog-state" role="status">
+      <p>Loading products...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="catalog-state catalog-state--error" role="alert">
+      <p>{{ errorMessage() }}</p>
+
+      <button type="button" (click)="retry()">Retry</button>
+    </div>
+  } @else if (products().length === 0) {
+    <div class="catalog-state">
+      <h2>No products found</h2>
+      <p>There are no products available for this page.</p>
+    </div>
+  } @else {
+    <div class="catalog-grid">
+      @for (product of products(); track product.id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
+
+    <app-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      [totalCount]="totalCount()"
+      (pageChange)="changePage($event)"
+    />
+  }
+</section>

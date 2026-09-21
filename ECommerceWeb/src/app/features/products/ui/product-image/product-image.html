@@ -1,0 +1,7 @@
+<div class="product-image">
+  @if (imageSrc()) {
+    <img [src]="imageSrc()" [alt]="productName()" loading="lazy" />
+  } @else {
+    <span>{{ productName() }}</span>
+  }
+</div>
