@@ -1,3 +1,48 @@
 <footer class="store-footer">
-  <div class="store-footer__inner">Demo store &middot; No payments collected</div>
+  <div class="store-footer__inner">
+    <div class="store-footer__main">
+      <div class="store-footer__brand">
+        <a class="store-footer__logo" routerLink="/" aria-label="Supply home">
+          <img src="/images/brand/supply-logo-white.png" alt="Supply" />
+        </a>
+
+        <p class="store-footer__description">
+          Thoughtfully selected technology essentials for better desks, flexible work and everyday
+          setups.
+        </p>
+      </div>
+
+      <nav class="store-footer__navigation" aria-label="Footer navigation">
+        <div class="store-footer__group">
+          <p class="store-footer__title">Explore</p>
+
+          <a routerLink="/"> Home </a>
+
+          <a routerLink="/products"> Shop all products </a>
+
+          <a routerLink="/" fragment="shop-by-setup"> Shop by setup </a>
+        </div>
+
+        <div class="store-footer__group">
+          <p class="store-footer__title">Supply</p>
+
+          <span> Technology essentials </span>
+
+          <span> Canadian pricing </span>
+
+          <span> Portfolio storefront </span>
+        </div>
+      </nav>
+    </div>
+
+    <div class="store-footer__bottom">
+      <p>
+        Demo store
+        <span aria-hidden="true">·</span>
+        No payments collected
+      </p>
+
+      <p>Built as a full-stack ecommerce project.</p>
+    </div>
+  </div>
 </footer>
