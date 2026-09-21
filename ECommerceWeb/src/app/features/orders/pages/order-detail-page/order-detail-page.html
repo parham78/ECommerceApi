@@ -1,0 +1,224 @@
+<section class="order-detail-page">
+  @if (isLoading()) {
+    <div class="order-state">Loading order...</div>
+  } @else if (errorMessage()) {
+    <div class="order-state order-state--error">
+      <h1>Order unavailable</h1>
+
+      <p>
+        {{ errorMessage() }}
+      </p>
+
+      <a routerLink="/orders"> ← Back to my orders </a>
+    </div>
+  } @else if (order(); as order) {
+    <header class="order-header">
+      <div>
+        <a class="order-header__back" routerLink="/orders"> ← My orders </a>
+
+        <p class="order-eyebrow">Order details</p>
+
+        <h1>Order #{{ order.id }}</h1>
+
+        <p class="order-header__date">
+          Placed
+          {{ order.createdAt | date: 'MMMM d, y, h:mm a' }}
+        </p>
+      </div>
+
+      <span
+        class="order-status"
+        [class.order-status--pending]="order.status === 'Pending'"
+        [class.order-status--processing]="order.status === 'Processing'"
+        [class.order-status--shipped]="order.status === 'Shipped'"
+        [class.order-status--completed]="order.status === 'Completed'"
+        [class.order-status--cancelled]="order.status === 'Cancelled'"
+      >
+        {{ order.status }}
+      </span>
+    </header>
+
+    <div class="order-layout">
+      <div class="order-main">
+        <section class="order-panel">
+          <div class="order-panel__heading">
+            <div>
+              <p class="order-eyebrow">Purchased items</p>
+
+              <h2>
+                {{ itemCount(order) }}
+
+                @if (itemCount(order) === 1) {
+                  item
+                } @else {
+                  items
+                }
+              </h2>
+            </div>
+          </div>
+
+          <div class="order-items">
+            @for (item of order.items; track item.id) {
+              <article class="order-item">
+                <a class="order-item__image" [routerLink]="['/products', item.productId]">
+                  <app-product-image [sku]="item.productSku" [productName]="item.productName" />
+                </a>
+
+                <div class="order-item__details">
+                  <span>
+                    {{ item.productSku }}
+                  </span>
+
+                  <h3>
+                    <a [routerLink]="['/products', item.productId]">
+                      {{ item.productName }}
+                    </a>
+                  </h3>
+
+                  <p>
+                    Quantity {{ item.quantity }}
+                    ·
+                    {{ item.unitPrice | currency: 'CAD' }}
+                    each
+                  </p>
+                </div>
+
+                <strong class="order-item__total">
+                  {{ item.lineTotal | currency: 'CAD' }}
+                </strong>
+              </article>
+            }
+          </div>
+        </section>
+
+        <section class="order-panel">
+          <div class="order-panel__heading">
+            <div>
+              <p class="order-eyebrow">Shipping</p>
+
+              <h2>Shipping address</h2>
+            </div>
+          </div>
+
+          <div class="shipping-address">
+            <strong>
+              {{ order.shippingRecipientName }}
+            </strong>
+
+            <address>
+              {{ order.shippingAddressLine1 }}
+
+              @if (order.shippingAddressLine2) {
+                <br />
+                {{ order.shippingAddressLine2 }}
+              }
+
+              <br />
+
+              {{ order.shippingCity }},
+              {{ order.shippingProvince }}
+              {{ order.shippingPostalCode }}
+
+              <br />
+
+              {{ order.shippingCountry }}
+            </address>
+
+            @if (order.shippingPhoneNumber) {
+              <p>
+                {{ order.shippingPhoneNumber }}
+              </p>
+            }
+          </div>
+        </section>
+      </div>
+
+      <aside class="order-summary">
+        <p class="order-eyebrow">Summary</p>
+
+        <h2>Order total</h2>
+
+        <div class="order-summary__row">
+          <span> Items </span>
+
+          <span>
+            {{ itemCount(order) }}
+          </span>
+        </div>
+
+        <div class="order-summary__row">
+          <span> Status </span>
+
+          <strong>
+            {{ order.status }}
+          </strong>
+        </div>
+
+        <div class="order-summary__divider"></div>
+
+        <div class="order-summary__total">
+          <span> Total </span>
+
+          <strong>
+            {{ order.totalPrice | currency: 'CAD' }}
+          </strong>
+        </div>
+
+        <p class="order-summary__note">
+          This order uses the shipping address that was saved at the time of checkout.
+        </p>
+
+        @if (order.status === 'Pending') {
+          <div class="order-cancel">
+            @if (!showCancelConfirmation()) {
+              <button type="button" class="order-cancel__button" (click)="requestCancellation()">
+                Cancel order
+              </button>
+            } @else {
+              <div class="order-cancel__confirmation">
+                <strong> Cancel this order? </strong>
+
+                <p>
+                  The order will be marked as cancelled and the purchased quantities will be
+                  returned to product stock.
+                </p>
+
+                @if (cancelError()) {
+                  <div class="order-cancel__error">
+                    {{ cancelError() }}
+                  </div>
+                }
+
+                <div class="order-cancel__actions">
+                  <button
+                    type="button"
+                    class="order-cancel__keep"
+                    [disabled]="isCancelling()"
+                    (click)="closeCancellation()"
+                  >
+                    Keep order
+                  </button>
+
+                  <button
+                    type="button"
+                    class="order-cancel__confirm"
+                    [disabled]="isCancelling()"
+                    (click)="cancelOrder()"
+                  >
+                    @if (isCancelling()) {
+                      Cancelling...
+                    } @else {
+                      Yes, cancel order
+                    }
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else if (order.status === 'Cancelled') {
+          <div class="order-cancelled-note">This order has been cancelled.</div>
+        }
+      </aside>
+    </div>
+  }
+</section>

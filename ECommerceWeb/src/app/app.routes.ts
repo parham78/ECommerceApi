@@ -61,6 +61,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'orders',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/orders/pages/orders-page/orders-page').then((m) => m.OrdersPage),
+      },
+      {
+        path: 'orders/:id',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/orders/pages/order-detail-page/order-detail-page').then(
+            (m) => m.OrderDetailPage,
+          ),
+      },
+      {
         path: '**',
         loadComponent: () =>
           import('./system/not-found-page/not-found-page').then((m) => m.NotFoundPage),
