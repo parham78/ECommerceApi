@@ -1,5 +1,5 @@
 <article class="product-card">
-  <app-product-image [productName]="product().name" />
+  <app-product-image [sku]="product().sku" [productName]="product().name" />
 
   <div class="product-card__content">
     <p class="product-card__sku">
@@ -10,7 +10,9 @@
       {{ product().name }}
     </h2>
 
-    <p class="product-card__price">{{ product().price }} CAD</p>
+    <p class="product-card__price">
+      {{ product().price | currency: 'CAD' }}
+    </p>
 
     <p class="product-card__stock">
       @if (product().stock > 0) {

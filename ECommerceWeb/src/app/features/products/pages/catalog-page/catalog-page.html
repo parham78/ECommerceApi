@@ -12,7 +12,7 @@
     <div role="alert">
       <p>{{ errorMessage() }}</p>
 
-      <button type="button" (click)="loadProducts()">Retry</button>
+      <button type="button" (click)="retry()">Retry</button>
     </div>
   } @else if (products().length === 0) {
     <p>No products found.</p>
@@ -22,5 +22,12 @@
         <app-product-card [product]="product" />
       }
     </div>
+
+    <app-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      [totalCount]="totalCount()"
+      (pageChange)="changePage($event)"
+    />
   }
 </section>

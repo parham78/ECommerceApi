@@ -1,0 +1,15 @@
+<nav class="pagination" aria-label="Product pagination">
+  <p class="pagination__summary">{{ totalCount() }} products</p>
+
+  <div class="pagination__controls">
+    <button type="button" (click)="goToPreviousPage()" [disabled]="currentPage() <= 1">
+      Previous
+    </button>
+
+    <span> Page {{ currentPage() }} of {{ totalPages() }} </span>
+
+    <button type="button" (click)="goToNextPage()" [disabled]="currentPage() >= totalPages()">
+      Next
+    </button>
+  </div>
+</nav>
