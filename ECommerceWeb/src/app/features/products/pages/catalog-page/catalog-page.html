@@ -5,4 +5,13 @@
       <h1>Products</h1>
     </div>
   </div>
+
+  <div>
+    @for (product of products(); track product.id) {
+      <p>
+        {{ product.name }}
+        — {{ product.price }} — Stock: {{ product.stock }}
+      </p>
+    }
+  </div>
 </section>
