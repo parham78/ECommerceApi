@@ -57,3 +57,10 @@
   font-size: 0.875rem;
   line-height: 1.4;
 }
+.product-card {
+  transition: border-color 150ms ease;
+}
+
+.product-card:hover {
+  border-color: var(--color-action);
+}
