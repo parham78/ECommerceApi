@@ -45,4 +45,7 @@ export class ProductsApi {
       params,
     });
   }
+  getById(id: number): Observable<ProductResponseDto> {
+    return this.http.get<ProductResponseDto>(`${this.apiBaseUrl}/products/${id}`);
+  }
 }
