@@ -1,0 +1,38 @@
+@if (isLoading()) {
+  <div class="product-state">
+    <p>Loading product...</p>
+  </div>
+} @else if (errorMessage()) {
+  <div class="product-state">
+    <h1>Product unavailable</h1>
+    <p>{{ errorMessage() }}</p>
+  </div>
+} @else if (product(); as product) {
+  <div class="product-page">
+    <a class="product-detail__back" routerLink="/products"> ← Back to products </a>
+
+    <section class="product-detail">
+      <div class="product-detail__media">
+        <app-product-image [sku]="product.sku" [productName]="product.name" />
+      </div>
+
+      <div class="product-detail__content">
+        <p class="product-detail__eyebrow">Product</p>
+
+        <h1>{{ product.name }}</h1>
+
+        <p class="product-detail__sku">SKU: {{ product.sku }}</p>
+
+        <p class="product-detail__price">
+          {{ product.price | currency: 'CAD' }}
+        </p>
+
+        @if (product.stock > 0) {
+          <p class="product-detail__stock">{{ product.stock }} in stock</p>
+        } @else {
+          <p class="product-detail__stock product-detail__stock--out">Out of stock</p>
+        }
+      </div>
+    </section>
+  </div>
+}
