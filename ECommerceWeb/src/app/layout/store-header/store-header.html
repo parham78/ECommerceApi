@@ -4,6 +4,10 @@
 
     <div class="store-header__account">
       @if (authSession.isAuthenticated()) {
+        @if (authSession.roles().includes('Customer')) {
+          <a class="store-header__action" routerLink="/basket"> Basket </a>
+        }
+
         <span class="store-header__email">
           {{ authSession.email() }}
         </span>
