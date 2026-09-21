@@ -1,0 +1,23 @@
+.catalog-page {
+  width: 100%;
+}
+
+.catalog-page__header {
+  margin-bottom: var(--space-8);
+}
+
+.catalog-page__eyebrow {
+  margin: 0 0 var(--space-2);
+  color: var(--color-action);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}

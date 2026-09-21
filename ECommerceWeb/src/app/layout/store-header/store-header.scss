@@ -1,0 +1,32 @@
+.store-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.store-header__inner {
+  max-width: var(--content-max-width);
+  min-height: 64px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+
+  display: flex;
+  align-items: center;
+}
+
+.store-header__brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 640px) {
+  .store-header__inner {
+    padding-inline: var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .store-header__inner {
+    padding-inline: var(--space-8);
+  }
+}
