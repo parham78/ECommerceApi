@@ -110,6 +110,22 @@ export class CatalogPage implements OnInit {
       queryParamsHandling: 'merge',
     });
   }
+  changePageSize(value: string): void {
+    const pageSize = Number(value);
+
+    if (![12, 24, 48].includes(pageSize)) {
+      return;
+    }
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        page: 1,
+        pageSize,
+      },
+      queryParamsHandling: 'merge',
+    });
+  }
 
   retry(): void {
     this.retryTrigger.next();

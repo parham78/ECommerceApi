@@ -4,6 +4,16 @@
       <p class="catalog-page__eyebrow">Catalog</p>
       <h1>Products</h1>
     </div>
+
+    <label class="page-size">
+      <span>Products per page</span>
+
+      <select #pageSizeSelect [value]="pageSize()" (change)="changePageSize(pageSizeSelect.value)">
+        <option value="12">12</option>
+        <option value="24">24</option>
+        <option value="48">48</option>
+      </select>
+    </label>
   </div>
 
   @if (isLoading()) {
