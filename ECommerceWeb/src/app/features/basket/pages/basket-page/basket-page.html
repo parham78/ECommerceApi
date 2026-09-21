@@ -9,6 +9,12 @@
     @if (basket.items.length === 0) {
       <p>Your basket is empty.</p>
     } @else {
+      @if (actionError()) {
+        <p>
+          {{ actionError() }}
+        </p>
+      }
+
       @for (item of basket.items; track item.id) {
         <article>
           <h2>{{ item.productName }}</h2>
@@ -16,10 +22,35 @@
           <p>SKU: {{ item.productSku }}</p>
 
           <p>
+            Unit price:
             {{ item.unitPrice | currency: 'CAD' }}
-            ×
-            {{ item.quantity }}
           </p>
+
+          <div class="quantity-control">
+            <button
+              type="button"
+              class="quantity-control__button"
+              [disabled]="item.quantity <= 1 || pendingItemId() === item.id"
+              [attr.aria-label]="'Decrease quantity of ' + item.productName"
+              (click)="decreaseQuantity(item)"
+            >
+              &minus;
+            </button>
+
+            <span class="quantity-control__value">
+              {{ item.quantity }}
+            </span>
+
+            <button
+              type="button"
+              class="quantity-control__button"
+              [disabled]="item.quantity >= item.availableStock || pendingItemId() === item.id"
+              [attr.aria-label]="'Increase quantity of ' + item.productName"
+              (click)="increaseQuantity(item)"
+            >
+              +
+            </button>
+          </div>
 
           <p>
             Line total:
@@ -27,6 +58,18 @@
           </p>
 
           <p>Available stock: {{ item.availableStock }}</p>
+
+          <button
+            type="button"
+            [disabled]="pendingItemId() === item.id"
+            (click)="removeItem(item.id)"
+          >
+            @if (pendingItemId() === item.id) {
+              Updating...
+            } @else {
+              Remove
+            }
+          </button>
         </article>
       }
 
@@ -36,6 +79,14 @@
           {{ basket.totalPrice | currency: 'CAD' }}
         </strong>
       </p>
+
+      <button type="button" [disabled]="isClearing()" (click)="clearBasket()">
+        @if (isClearing()) {
+          Clearing...
+        } @else {
+          Clear basket
+        }
+      </button>
     }
   }
 </section>

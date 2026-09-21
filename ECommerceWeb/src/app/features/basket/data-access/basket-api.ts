@@ -3,7 +3,11 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../../../core/config/api-base-url';
-import { AddBasketItemRequestDto, BasketResponseDto } from './basket.dto';
+import {
+  AddBasketItemRequestDto,
+  BasketResponseDto,
+  UpdateBasketItemRequestDto,
+} from './basket.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -18,5 +22,23 @@ export class BasketApi {
 
   addItem(request: AddBasketItemRequestDto): Observable<BasketResponseDto> {
     return this.http.post<BasketResponseDto>(`${this.apiBaseUrl}/me/basket/items`, request);
+  }
+
+  updateQuantity(
+    itemId: number,
+    request: UpdateBasketItemRequestDto,
+  ): Observable<BasketResponseDto> {
+    return this.http.patch<BasketResponseDto>(
+      `${this.apiBaseUrl}/me/basket/items/${itemId}`,
+      request,
+    );
+  }
+
+  removeItem(itemId: number): Observable<BasketResponseDto> {
+    return this.http.delete<BasketResponseDto>(`${this.apiBaseUrl}/me/basket/items/${itemId}`);
+  }
+
+  clearBasket(): Observable<BasketResponseDto> {
+    return this.http.delete<BasketResponseDto>(`${this.apiBaseUrl}/me/basket/items`);
   }
 }
