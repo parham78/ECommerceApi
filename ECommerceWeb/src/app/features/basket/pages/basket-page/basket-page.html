@@ -2,6 +2,7 @@
   <header class="basket-header">
     <div>
       <p class="eyebrow">Shopping basket</p>
+
       <h1>Your basket</h1>
     </div>
 
@@ -15,7 +16,10 @@
   } @else if (errorMessage()) {
     <div class="basket-state">
       <h2>Something went wrong</h2>
-      <p>{{ errorMessage() }}</p>
+
+      <p>
+        {{ errorMessage() }}
+      </p>
     </div>
   } @else if (basket(); as basket) {
     @if (basket.items.length === 0) {
@@ -105,7 +109,8 @@
                   <div class="basket-item__availability">
                     <span class="status-dot"></span>
 
-                    {{ item.availableStock }} available
+                    {{ item.availableStock }}
+                    available
                   </div>
 
                   <button
@@ -132,7 +137,7 @@
           <h2>Summary</h2>
 
           <div class="summary__row">
-            <span>Products</span>
+            <span> Products </span>
 
             <span>
               {{ basket.totalPrice | currency: 'CAD' }}
@@ -140,14 +145,15 @@
           </div>
 
           <div class="summary__row summary__row--muted">
-            <span>Shipping</span>
-            <span>Calculated later</span>
+            <span> Shipping </span>
+
+            <span> Calculated later </span>
           </div>
 
           <div class="summary__divider"></div>
 
           <div class="summary__total">
-            <span>Total</span>
+            <span> Total </span>
 
             <strong>
               {{ basket.totalPrice | currency: 'CAD' }}
@@ -158,6 +164,12 @@
             Taxes and shipping are not included yet. This is a demo store and no payments are
             collected.
           </p>
+
+          <a class="checkout-link" routerLink="/checkout">
+            Proceed to checkout
+
+            <span aria-hidden="true"> → </span>
+          </a>
 
           <button
             type="button"

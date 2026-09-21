@@ -45,6 +45,22 @@ export const routes: Routes = [
           import('./features/basket/pages/basket-page/basket-page').then((m) => m.BasketPage),
       },
       {
+        path: 'checkout',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/checkout/pages/checkout-page/checkout-page').then(
+            (m) => m.CheckoutPage,
+          ),
+      },
+      {
+        path: 'addresses',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/addresses/pages/addresses-page/addresses-page').then(
+            (m) => m.AddressesPage,
+          ),
+      },
+      {
         path: '**',
         loadComponent: () =>
           import('./system/not-found-page/not-found-page').then((m) => m.NotFoundPage),

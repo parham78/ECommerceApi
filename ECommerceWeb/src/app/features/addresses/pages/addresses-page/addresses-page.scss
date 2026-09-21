@@ -1,0 +1,458 @@
+.addresses-page {
+  width: 100%;
+}
+
+.addresses-header {
+  margin-bottom: var(--space-10);
+
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+.addresses-eyebrow {
+  margin: 0 0 var(--space-2);
+
+  color: var(--color-action);
+
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.addresses-header h1 {
+  margin: 0;
+
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.addresses-header > div > p:last-child {
+  max-width: 580px;
+  margin: var(--space-4) 0 0;
+
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.addresses-header__add,
+.button {
+  min-height: 48px;
+  padding: 0 var(--space-5);
+
+  border: 0;
+  border-radius: 11px;
+
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.addresses-header__add,
+.button--primary {
+  background: var(--color-action);
+  color: white;
+}
+
+.addresses-header__add:hover,
+.button--primary:hover:not(:disabled) {
+  background: var(--color-action-hover);
+}
+
+.address-form-panel {
+  margin-bottom: var(--space-10);
+  padding: var(--space-8);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+
+  box-shadow: var(--shadow-elevated);
+}
+
+.address-form-panel__heading {
+  margin-bottom: var(--space-6);
+
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.address-form-panel__heading h2 {
+  margin: 0;
+
+  font-size: 1.7rem;
+}
+
+.address-form-panel__close {
+  width: 40px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.address-form__grid {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.address-form label {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.address-form label > span {
+  color: var(--color-text);
+
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.address-form label em {
+  margin-left: var(--space-1);
+
+  color: var(--color-text-secondary);
+
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.address-form input[type='text'],
+.address-form input[type='tel'] {
+  min-height: 48px;
+  padding: 0 var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+
+  background: white;
+  color: var(--color-text);
+
+  outline: none;
+}
+
+.address-form input:focus {
+  border-color: var(--color-action);
+
+  box-shadow: 0 0 0 3px var(--color-action-soft);
+}
+
+.address-form small {
+  color: var(--color-danger);
+
+  font-size: 0.75rem;
+}
+
+.default-checkbox {
+  margin-top: var(--space-6);
+
+  display: flex !important;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-3) !important;
+
+  cursor: pointer;
+}
+
+.default-checkbox input {
+  width: 18px;
+  height: 18px;
+
+  accent-color: var(--color-action);
+}
+
+.default-address-note {
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+
+  display: grid;
+  gap: var(--space-1);
+
+  background: var(--color-action-soft);
+  border-radius: 10px;
+
+  color: var(--color-action);
+}
+
+.default-address-note span {
+  font-size: 0.85rem;
+}
+
+.address-form__actions {
+  margin-top: var(--space-8);
+
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.button--secondary {
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.addresses-grid {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.address-card {
+  padding: var(--space-6);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+
+  box-shadow: var(--shadow-card);
+}
+
+.address-card--default {
+  border-color: rgb(20 91 72 / 40%);
+}
+
+.address-card__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.address-card__heading > div {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.address-card__label {
+  color: var(--color-action);
+
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.address-card__default {
+  padding: var(--space-1) var(--space-2);
+
+  background: var(--color-action-soft);
+  border-radius: 999px;
+
+  color: var(--color-action);
+
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.address-card__number {
+  color: var(--color-text-secondary);
+
+  font-size: 0.75rem;
+}
+
+.address-card h2 {
+  margin: var(--space-5) 0 var(--space-3);
+
+  font-size: 1.25rem;
+}
+
+.address-card address {
+  color: var(--color-text-secondary);
+
+  font-size: 0.92rem;
+  font-style: normal;
+  line-height: 1.7;
+}
+
+.address-card__phone {
+  margin: var(--space-4) 0 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: 0.85rem;
+}
+
+.address-card__actions {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+
+  display: flex;
+  gap: var(--space-3);
+
+  border-top: 1px solid var(--color-border);
+}
+
+.address-card__actions button,
+.delete-confirmation button {
+  padding: var(--space-2) var(--space-3);
+
+  border: 0;
+  border-radius: 8px;
+
+  background: var(--color-surface-soft);
+  color: var(--color-action);
+
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.address-card__actions .address-card__delete {
+  color: var(--color-danger);
+}
+
+.delete-confirmation {
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+
+  background: var(--color-danger-soft);
+  border-radius: 10px;
+}
+
+.delete-confirmation p {
+  margin: 0;
+
+  color: var(--color-danger);
+
+  font-weight: 700;
+}
+
+.delete-confirmation > div {
+  margin-top: var(--space-3);
+
+  display: flex;
+  gap: var(--space-2);
+}
+
+.delete-confirmation .delete-confirmation__confirm {
+  background: var(--color-danger);
+  color: white;
+}
+
+.address-message,
+.addresses-state,
+.addresses-empty {
+  padding: var(--space-6);
+
+  border-radius: var(--radius-card);
+}
+
+.address-message {
+  margin-bottom: var(--space-5);
+}
+
+.address-message--error,
+.addresses-state--error {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.addresses-state {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.addresses-empty {
+  padding: var(--space-12);
+
+  text-align: center;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+
+  box-shadow: var(--shadow-card);
+}
+
+.addresses-empty__icon {
+  width: 56px;
+  height: 56px;
+
+  margin: 0 auto var(--space-5);
+
+  display: grid;
+  place-items: center;
+
+  background: var(--color-action-soft);
+  border-radius: 50%;
+
+  color: var(--color-action);
+
+  font-size: 1.7rem;
+}
+
+.addresses-empty h2 {
+  margin: 0;
+}
+
+.addresses-empty p {
+  max-width: 520px;
+
+  margin: var(--space-3) auto var(--space-6);
+
+  color: var(--color-text-secondary);
+
+  line-height: 1.6;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+@media (min-width: 760px) {
+  .address-form__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .address-form__wide {
+    grid-column: 1 / -1;
+  }
+
+  .addresses-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .addresses-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .addresses-header__add {
+    width: 100%;
+  }
+
+  .address-form-panel {
+    padding: var(--space-5);
+  }
+
+  .address-form__actions {
+    flex-direction: column-reverse;
+  }
+
+  .address-form__actions .button {
+    width: 100%;
+  }
+
+  .addresses-empty {
+    padding: var(--space-8) var(--space-5);
+  }
+}

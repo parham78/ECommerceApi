@@ -8,6 +8,8 @@
       <a class="store-header__nav-link" routerLink="/products"> Shop </a>
 
       @if (authSession.isAuthenticated() && authSession.roles().includes('Customer')) {
+        <a class="store-header__nav-link" routerLink="/addresses"> Addresses </a>
+
         <a class="store-header__nav-link" routerLink="/basket"> Basket </a>
       }
     </nav>
