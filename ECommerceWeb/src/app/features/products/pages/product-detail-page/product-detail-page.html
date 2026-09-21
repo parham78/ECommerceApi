@@ -39,41 +39,119 @@
         </p>
 
         @if (product.stock > 0) {
-          <p class="product-detail__stock">{{ product.stock }} in stock</p>
+          <p class="product-detail__stock">
+            <span></span>
+            {{ product.stock }} in stock
+          </p>
         } @else {
           <p class="product-detail__stock product-detail__stock--out">Out of stock</p>
         }
 
-        @if (!authSession.isAuthenticated()) {
-          <a class="product-detail__basket-action" routerLink="/login">
-            Sign in to add to basket
-          </a>
-        } @else if (authSession.roles().includes('Customer')) {
-          <button
-            type="button"
-            class="product-detail__basket-action"
-            [disabled]="product.stock <= 0 || isAddingToBasket()"
-            (click)="addToBasket()"
-          >
-            @if (isAddingToBasket()) {
-              Adding...
+        <div class="product-detail__purchase">
+          @if (!authSession.isAuthenticated()) {
+            <p class="product-detail__purchase-label">Ready to order?</p>
+
+            <a class="product-detail__button product-detail__button--primary" routerLink="/login">
+              Sign in to add to basket
+            </a>
+          } @else if (authSession.roles().includes('Customer')) {
+            @if (isBasketLoading()) {
+              <button
+                type="button"
+                class="product-detail__button product-detail__button--primary"
+                disabled
+              >
+                Checking basket...
+              </button>
+            } @else if (basketItem(); as item) {
+              <div class="product-basket">
+                <div class="product-basket__header">
+                  <div>
+                    <p class="product-basket__status">
+                      <span></span>
+                      In your basket
+                    </p>
+
+                    <p class="product-basket__subtotal">
+                      Subtotal:
+                      <strong>
+                        {{ item.lineTotal | currency: 'CAD' }}
+                      </strong>
+                    </p>
+                  </div>
+
+                  <a class="product-basket__view" routerLink="/basket"> View basket → </a>
+                </div>
+
+                <div class="product-basket__actions">
+                  <div class="product-quantity">
+                    <button
+                      type="button"
+                      [disabled]="item.quantity <= 1 || isBasketBusy()"
+                      aria-label="Decrease quantity"
+                      (click)="decreaseQuantity()"
+                    >
+                      &minus;
+                    </button>
+
+                    <span>
+                      {{ item.quantity }}
+                    </span>
+
+                    <button
+                      type="button"
+                      [disabled]="item.quantity >= item.availableStock || isBasketBusy()"
+                      aria-label="Increase quantity"
+                      (click)="increaseQuantity()"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="product-basket__remove"
+                    [disabled]="isBasketBusy()"
+                    (click)="removeFromBasket()"
+                  >
+                    @if (isBasketBusy()) {
+                      Updating...
+                    } @else {
+                      Remove
+                    }
+                  </button>
+                </div>
+              </div>
             } @else {
-              Add to basket
+              <button
+                type="button"
+                class="product-detail__button product-detail__button--primary"
+                [disabled]="product.stock <= 0 || isBasketBusy()"
+                (click)="addToBasket()"
+              >
+                @if (isBasketBusy()) {
+                  Adding...
+                } @else if (product.stock <= 0) {
+                  Out of stock
+                } @else {
+                  Add to basket
+                }
+              </button>
             }
-          </button>
-        }
+          }
 
-        @if (basketMessage()) {
-          <p class="product-detail__basket-message">
-            {{ basketMessage() }}
-          </p>
-        }
+          @if (basketMessage()) {
+            <p class="product-detail__basket-message">
+              {{ basketMessage() }}
+            </p>
+          }
 
-        @if (basketError()) {
-          <p class="product-detail__basket-error">
-            {{ basketError() }}
-          </p>
-        }
+          @if (basketError()) {
+            <p class="product-detail__basket-error">
+              {{ basketError() }}
+            </p>
+          }
+        </div>
       </div>
     </section>
   </div>

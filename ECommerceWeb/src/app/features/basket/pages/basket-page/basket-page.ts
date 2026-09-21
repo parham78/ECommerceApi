@@ -1,13 +1,15 @@
 import { CurrencyPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
+import { ProductImage } from '../../../products/ui/product-image/product-image';
 import { BasketApi } from '../../data-access/basket-api';
 import { BasketItemResponseDto, BasketResponseDto } from '../../data-access/basket.dto';
 
 @Component({
   selector: 'app-basket-page',
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, RouterLink, ProductImage],
   templateUrl: './basket-page.html',
   styleUrl: './basket-page.scss',
 })
