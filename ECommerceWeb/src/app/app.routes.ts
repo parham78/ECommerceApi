@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { guestGuard } from './features/auth/guards/guest-guard';
+
 export const routes: Routes = [
   {
     path: '',
@@ -22,6 +24,18 @@ export const routes: Routes = [
           import('./features/products/pages/product-detail-page/product-detail-page').then(
             (m) => m.ProductDetailPage,
           ),
+      },
+      {
+        path: 'login',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/auth/pages/login-page/login-page').then((m) => m.LoginPage),
+      },
+      {
+        path: 'register',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/auth/pages/register-page/register-page').then((m) => m.RegisterPage),
       },
       {
         path: '**',

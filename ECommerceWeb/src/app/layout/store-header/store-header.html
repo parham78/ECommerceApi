@@ -1,5 +1,17 @@
 <header class="store-header">
   <div class="store-header__inner">
-    <strong class="store-header__brand">Supply</strong>
+    <a class="store-header__brand" routerLink="/products"> Supply </a>
+
+    <div class="store-header__account">
+      @if (authSession.isAuthenticated()) {
+        <span class="store-header__email">
+          {{ authSession.email() }}
+        </span>
+
+        <button type="button" class="store-header__action" (click)="signOut()">Sign out</button>
+      } @else {
+        <a class="store-header__action" routerLink="/login"> Sign in </a>
+      }
+    </div>
   </div>
 </header>
