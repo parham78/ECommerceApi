@@ -1,36 +1,151 @@
 .store-header {
-  background: var(--color-surface);
+  position: relative;
+  z-index: 20;
+
+  background: rgb(255 255 255 / 92%);
   border-bottom: 1px solid var(--color-border);
+
+  backdrop-filter: blur(14px);
 }
 
 .store-header__inner {
   width: 100%;
   max-width: var(--content-max-width);
-  min-height: 68px;
+  min-height: 76px;
 
   margin: 0 auto;
   padding: 0 var(--space-4);
 
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
+  gap: var(--space-6);
 }
 
 .store-header__brand {
-  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
 
-  font-size: 1.25rem;
-  font-weight: 750;
-  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+.store-header__brand img {
+  width: auto;
+  height: 34px;
+
+  display: block;
+  object-fit: contain;
+}
+
+.store-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.store-header__nav-link {
+  min-height: 42px;
+  padding: 0 var(--space-3);
+
+  display: inline-flex;
+  align-items: center;
+
+  border-radius: 9px;
+
+  color: var(--color-text-secondary);
+
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.store-header__nav-link:hover {
+  background: var(--color-action-soft);
+  color: var(--color-action);
+}
+
+.store-header__account {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.store-header__email {
+  display: none;
+
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+}
+
+.store-header__account-action {
+  min-height: 42px;
+  padding: 0 var(--space-4);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--color-action);
+  border-radius: 10px;
+
+  background: var(--color-action);
+  color: white;
+
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.store-header__account-action:hover {
+  background: var(--color-action-hover);
+}
+
+.store-header__brand:focus-visible,
+.store-header__nav-link:focus-visible,
+.store-header__account-action:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
 }
 
 @media (min-width: 640px) {
   .store-header__inner {
     padding-inline: var(--space-6);
   }
+
+  .store-header__email {
+    display: inline;
+  }
 }
 
 @media (min-width: 1024px) {
   .store-header__inner {
     padding-inline: var(--space-8);
+  }
+}
+
+@media (max-width: 600px) {
+  .store-header__inner {
+    min-height: 68px;
+    gap: var(--space-3);
+  }
+
+  .store-header__brand img {
+    height: 28px;
+  }
+
+  .store-header__nav {
+    gap: 0;
+  }
+
+  .store-header__nav-link {
+    padding: 0 var(--space-2);
+    font-size: 0.82rem;
+  }
+
+  .store-header__account-action {
+    padding: 0 var(--space-3);
   }
 }

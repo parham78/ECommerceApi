@@ -1,0 +1,199 @@
+<section class="hero">
+  <div class="hero__content">
+    <p class="hero__eyebrow">Modern technology essentials</p>
+
+    <h1>
+      Better tools for
+      <span>better work.</span>
+    </h1>
+
+    <p class="hero__description">
+      Thoughtfully selected accessories for your desk, workspace and everyday technology setup.
+    </p>
+
+    <div class="hero__actions">
+      <a class="hero__primary" routerLink="/products">
+        Shop the collection
+        <span aria-hidden="true">→</span>
+      </a>
+
+      <a class="hero__secondary" href="#shop-by-setup"> Explore setups </a>
+    </div>
+
+    <div class="hero__details">
+      <div>
+        <strong>15</strong>
+        <span>Products</span>
+      </div>
+
+      <div>
+        <strong>3</strong>
+        <span>Curated setups</span>
+      </div>
+
+      <div>
+        <strong>CAD</strong>
+        <span>Canadian pricing</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__visual">
+    <img
+      src="/images/home/hero-tech-setup.webp"
+      alt="Modern technology accessories arranged in a premium workspace"
+    />
+
+    <div class="hero__visual-badge">
+      <span>Supply</span>
+      <strong>Workspace essentials</strong>
+    </div>
+  </div>
+</section>
+
+<section class="featured-section">
+  <div class="section-heading">
+    <div>
+      <p class="section-heading__eyebrow">Selected essentials</p>
+
+      <h2>Featured products</h2>
+
+      <p class="section-heading__description">
+        A few everyday tools chosen for a cleaner, more capable workspace.
+      </p>
+    </div>
+
+    <a class="section-heading__link" routerLink="/products">
+      View all products
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+
+  @if (isFeaturedLoading()) {
+    <div class="featured-state">
+      <p>Loading featured products...</p>
+    </div>
+  } @else if (featuredError()) {
+    <div class="featured-state">
+      <p>
+        {{ featuredError() }}
+      </p>
+    </div>
+  } @else {
+    <div class="featured-grid">
+      @for (product of featuredProducts(); track product.id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
+  }
+</section>
+
+<section id="shop-by-setup" class="setup-section">
+  <div class="setup-section__heading">
+    <p class="section-heading__eyebrow">Shop by setup</p>
+
+    <h2>Built around how you work.</h2>
+
+    <p>Explore essentials grouped around the spaces, routines and setups they belong in.</p>
+  </div>
+
+  <div class="setup-grid">
+    <a class="setup-card setup-card--large" routerLink="/products">
+      <img
+        src="/images/home/category-desk-setup.webp"
+        alt="Modern desk setup with technology accessories"
+      />
+
+      <div class="setup-card__overlay"></div>
+
+      <div class="setup-card__content">
+        <p>01</p>
+
+        <h3>Desk setup</h3>
+
+        <span>
+          Build a workspace that works harder.
+
+          <strong aria-hidden="true"> → </strong>
+        </span>
+      </div>
+    </a>
+
+    <a class="setup-card" routerLink="/products">
+      <img
+        src="/images/home/category-work-anywhere.webp"
+        alt="Portable technology for working anywhere"
+      />
+
+      <div class="setup-card__overlay"></div>
+
+      <div class="setup-card__content">
+        <p>02</p>
+
+        <h3>Work anywhere</h3>
+
+        <span>
+          Portable tools for flexible work.
+
+          <strong aria-hidden="true"> → </strong>
+        </span>
+      </div>
+    </a>
+
+    <a class="setup-card" routerLink="/products">
+      <img src="/images/home/category-audio-gaming.webp" alt="Audio and gaming technology setup" />
+
+      <div class="setup-card__overlay"></div>
+
+      <div class="setup-card__content">
+        <p>03</p>
+
+        <h3>Audio &amp; gaming</h3>
+
+        <span>
+          Better sound. Better downtime.
+
+          <strong aria-hidden="true"> → </strong>
+        </span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="workspace-section">
+  <div class="workspace-section__media">
+    <img
+      src="/images/home/workspace-banner.webp"
+      alt="Modern workspace with carefully selected technology accessories"
+    />
+  </div>
+
+  <div class="workspace-section__content">
+    <p class="section-heading__eyebrow">Built for everyday work</p>
+
+    <h2>Your workspace should work for you.</h2>
+
+    <p>
+      From the desk to the commute, Supply brings together practical technology designed to make
+      everyday setups simpler, cleaner and more capable.
+    </p>
+
+    <a class="workspace-section__action" routerLink="/products">
+      Explore the collection
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<section class="home-cta">
+  <div>
+    <p class="section-heading__eyebrow">The full collection</p>
+
+    <h2>Find the right tools for your setup.</h2>
+  </div>
+
+  <a class="home-cta__action" routerLink="/products">
+    Shop all products
+    <span aria-hidden="true">→</span>
+  </a>
+</section>

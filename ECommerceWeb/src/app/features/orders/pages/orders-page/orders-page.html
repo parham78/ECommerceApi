@@ -1,0 +1,123 @@
+<section class="orders-page">
+  <header class="orders-header">
+    <div>
+      <p class="orders-eyebrow">Your account</p>
+
+      <h1>My orders</h1>
+
+      <p>Review your purchases, order status and order details.</p>
+    </div>
+
+    @if (!isLoading() && !errorMessage()) {
+      <div class="orders-header__count">
+        {{ totalCount() }}
+        @if (totalCount() === 1) {
+          order
+        } @else {
+          orders
+        }
+      </div>
+    }
+  </header>
+
+  @if (isLoading()) {
+    <div class="orders-state">Loading your orders...</div>
+  } @else if (errorMessage()) {
+    <div class="orders-state orders-state--error">
+      <h2>Unable to load orders</h2>
+
+      <p>
+        {{ errorMessage() }}
+      </p>
+
+      <button type="button" (click)="retry()">Try again</button>
+    </div>
+  } @else if (orders().length === 0) {
+    <div class="orders-empty">
+      <div class="orders-empty__mark">0</div>
+
+      <h2>No orders yet</h2>
+
+      <p>
+        Once you place an order, you will be able to follow its status and view its details here.
+      </p>
+
+      <a class="primary-link" routerLink="/products"> Browse products </a>
+    </div>
+  } @else {
+    <div class="orders-list">
+      @for (order of orders(); track order.id) {
+        <article class="order-card">
+          <div class="order-card__top">
+            <div>
+              <p class="order-card__number">Order #{{ order.id }}</p>
+
+              <p class="order-card__date">
+                {{ order.createdAt | date: 'MMM d, y' }}
+              </p>
+            </div>
+
+            <span
+              class="order-card__status"
+              [class.order-card__status--pending]="order.status === 'Pending'"
+              [class.order-card__status--processing]="order.status === 'Processing'"
+              [class.order-card__status--shipped]="order.status === 'Shipped'"
+              [class.order-card__status--completed]="order.status === 'Completed'"
+              [class.order-card__status--cancelled]="order.status === 'Cancelled'"
+            >
+              {{ order.status }}
+            </span>
+          </div>
+
+          <div class="order-card__summary">
+            <div>
+              <span>Items</span>
+
+              <strong>
+                {{ itemCount(order) }}
+              </strong>
+            </div>
+
+            <div>
+              <span>Total</span>
+
+              <strong>
+                {{ order.totalPrice | currency: 'CAD' }}
+              </strong>
+            </div>
+          </div>
+
+          <div class="order-card__footer">
+            <span>
+              {{ order.customerName }}
+            </span>
+
+            <a [routerLink]="['/orders', order.id]">
+              View order
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+      <nav class="orders-pagination" aria-label="Orders pagination">
+        <button type="button" [disabled]="currentPage() <= 1" (click)="previousPage()">
+          ← Previous
+        </button>
+
+        <span>
+          Page
+          <strong>{{ currentPage() }}</strong>
+          of
+          <strong>{{ totalPages() }}</strong>
+        </span>
+
+        <button type="button" [disabled]="currentPage() >= totalPages()" (click)="nextPage()">
+          Next →
+        </button>
+      </nav>
+    }
+  }
+</section>

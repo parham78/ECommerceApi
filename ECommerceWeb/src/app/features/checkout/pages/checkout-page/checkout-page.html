@@ -1,0 +1,269 @@
+<section class="checkout-page">
+  @if (isLoading()) {
+    <div class="checkout-state">
+      <p>Preparing checkout...</p>
+    </div>
+  } @else if (loadError()) {
+    <div class="checkout-state checkout-state--error">
+      <h1>Checkout unavailable</h1>
+
+      <p>
+        {{ loadError() }}
+      </p>
+
+      <a routerLink="/basket"> Return to basket </a>
+    </div>
+  } @else if (order(); as completedOrder) {
+    <div class="checkout-success">
+      <div class="checkout-success__mark">✓</div>
+
+      <p class="checkout-eyebrow">Order confirmed</p>
+
+      <h1>Thank you, {{ completedOrder.customerName }}.</h1>
+
+      <p class="checkout-success__message">Your order has been created successfully.</p>
+
+      <div class="checkout-success__details">
+        <div>
+          <span>Order</span>
+          <strong>#{{ completedOrder.id }}</strong>
+        </div>
+
+        <div>
+          <span>Status</span>
+          <strong>{{ completedOrder.status }}</strong>
+        </div>
+
+        <div>
+          <span>Total</span>
+
+          <strong>
+            {{ completedOrder.totalPrice | currency: 'CAD' }}
+          </strong>
+        </div>
+      </div>
+
+      <div class="checkout-success__actions">
+        <a class="button button--primary" routerLink="/products"> Continue shopping </a>
+      </div>
+    </div>
+  } @else {
+    @if (basket(); as currentBasket) {
+      @if (currentBasket.items.length === 0) {
+        <div class="checkout-state">
+          <p class="checkout-eyebrow">Checkout</p>
+
+          <h1>Your basket is empty.</h1>
+
+          <p>Add something to your basket before checking out.</p>
+
+          <a class="button button--primary" routerLink="/products"> Browse products </a>
+        </div>
+      } @else {
+        <header class="checkout-header">
+          <div>
+            <p class="checkout-eyebrow">Secure checkout</p>
+
+            <h1>Review your order.</h1>
+
+            <p>Confirm your shipping address and review your items before placing the order.</p>
+          </div>
+
+          <a class="checkout-header__back" routerLink="/basket"> ← Back to basket </a>
+        </header>
+
+        <div class="checkout-layout">
+          <div class="checkout-main">
+            <section class="checkout-panel">
+              <div class="checkout-panel__heading">
+                <div>
+                  <span class="checkout-step"> 01 </span>
+
+                  <h2>Shipping address</h2>
+                </div>
+
+                <div class="checkout-panel__actions">
+                  @if (selectedAddress(); as address) {
+                    <span class="checkout-panel__selected">
+                      {{ address.label }}
+                    </span>
+                  }
+
+                  <a routerLink="/addresses"> Manage addresses </a>
+                </div>
+              </div>
+
+              @if (addresses().length === 0) {
+                <div class="address-empty">
+                  <h3>No saved addresses</h3>
+
+                  <p>Add a shipping address before placing your order.</p>
+
+                  <a class="button button--primary" routerLink="/addresses"> Add an address </a>
+                </div>
+              } @else {
+                <div class="address-grid">
+                  @for (address of addresses(); track address.id) {
+                    <label
+                      class="address-card"
+                      [class.address-card--selected]="selectedAddressId() === address.id"
+                    >
+                      <input
+                        type="radio"
+                        name="shippingAddress"
+                        [checked]="selectedAddressId() === address.id"
+                        (change)="selectAddress(address.id)"
+                      />
+
+                      <div class="address-card__top">
+                        <strong>
+                          {{ address.label }}
+                        </strong>
+
+                        @if (address.isDefault) {
+                          <span> Default </span>
+                        }
+                      </div>
+
+                      <p class="address-card__recipient">
+                        {{ address.recipientName }}
+                      </p>
+
+                      <address>
+                        {{ address.addressLine1 }}
+
+                        @if (address.addressLine2) {
+                          <br />
+                          {{ address.addressLine2 }}
+                        }
+
+                        <br />
+
+                        {{ address.city }},
+                        {{ address.province }}
+                        {{ address.postalCode }}
+
+                        <br />
+
+                        {{ address.country }}
+                      </address>
+
+                      @if (address.phoneNumber) {
+                        <p class="address-card__phone">
+                          {{ address.phoneNumber }}
+                        </p>
+                      }
+                    </label>
+                  }
+                </div>
+              }
+            </section>
+
+            <section class="checkout-panel">
+              <div class="checkout-panel__heading">
+                <div>
+                  <span class="checkout-step"> 02 </span>
+
+                  <h2>Order review</h2>
+                </div>
+
+                <span class="checkout-panel__selected">
+                  {{ currentBasket.items.length }}
+                  items
+                </span>
+              </div>
+
+              <div class="checkout-items">
+                @for (item of currentBasket.items; track item.id) {
+                  <article class="checkout-item">
+                    <div class="checkout-item__image">
+                      <app-product-image [sku]="item.productSku" [productName]="item.productName" />
+                    </div>
+
+                    <div class="checkout-item__details">
+                      <span>
+                        {{ item.productSku }}
+                      </span>
+
+                      <strong>
+                        {{ item.productName }}
+                      </strong>
+
+                      <p>
+                        Quantity {{ item.quantity }}
+                        ·
+                        {{ item.unitPrice | currency: 'CAD' }}
+                        each
+                      </p>
+                    </div>
+
+                    <strong class="checkout-item__total">
+                      {{ item.lineTotal | currency: 'CAD' }}
+                    </strong>
+                  </article>
+                }
+              </div>
+            </section>
+          </div>
+
+          <aside class="checkout-summary">
+            <p class="checkout-eyebrow">Order summary</p>
+
+            <h2>Your total</h2>
+
+            <div class="checkout-summary__row">
+              <span>Products</span>
+
+              <strong>
+                {{ currentBasket.totalPrice | currency: 'CAD' }}
+              </strong>
+            </div>
+
+            <div class="checkout-summary__row">
+              <span>Shipping</span>
+              <span>Calculated later</span>
+            </div>
+
+            <div class="checkout-summary__total">
+              <span>Total</span>
+
+              <strong>
+                {{ currentBasket.totalPrice | currency: 'CAD' }}
+              </strong>
+            </div>
+
+            @if (checkoutError()) {
+              <div class="checkout-error">
+                {{ checkoutError() }}
+              </div>
+            }
+
+            <button
+              type="button"
+              class="checkout-submit"
+              [disabled]="selectedAddressId() === null || isSubmitting()"
+              (click)="placeOrder()"
+            >
+              @if (isSubmitting()) {
+                Placing order...
+              } @else {
+                Place order
+                <span aria-hidden="true">→</span>
+              }
+            </button>
+
+            @if (addresses().length === 0) {
+              <p class="checkout-summary__note">
+                Add a shipping address before placing your order.
+              </p>
+            } @else {
+              <p class="checkout-summary__note">
+                Your basket will only be cleared after checkout succeeds.
+              </p>
+            }
+          </aside>
+        </div>
+      }
+    }
+  }
+</section>

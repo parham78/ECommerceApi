@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 
+import { guestGuard } from './features/auth/guards/guest-guard';
+import { customerGuard } from './features/auth/guards/customer-guard';
+
 export const routes: Routes = [
   {
     path: '',
@@ -8,8 +11,8 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        pathMatch: 'full',
-        redirectTo: 'products',
+        loadComponent: () =>
+          import('./features/home/pages/home-page/home-page').then((m) => m.HomePage),
       },
       {
         path: 'products',
@@ -21,6 +24,54 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/products/pages/product-detail-page/product-detail-page').then(
             (m) => m.ProductDetailPage,
+          ),
+      },
+      {
+        path: 'login',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/auth/pages/login-page/login-page').then((m) => m.LoginPage),
+      },
+      {
+        path: 'register',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/auth/pages/register-page/register-page').then((m) => m.RegisterPage),
+      },
+      {
+        path: 'basket',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/basket/pages/basket-page/basket-page').then((m) => m.BasketPage),
+      },
+      {
+        path: 'checkout',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/checkout/pages/checkout-page/checkout-page').then(
+            (m) => m.CheckoutPage,
+          ),
+      },
+      {
+        path: 'addresses',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/addresses/pages/addresses-page/addresses-page').then(
+            (m) => m.AddressesPage,
+          ),
+      },
+      {
+        path: 'orders',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/orders/pages/orders-page/orders-page').then((m) => m.OrdersPage),
+      },
+      {
+        path: 'orders/:id',
+        canActivate: [customerGuard],
+        loadComponent: () =>
+          import('./features/orders/pages/order-detail-page/order-detail-page').then(
+            (m) => m.OrderDetailPage,
           ),
       },
       {

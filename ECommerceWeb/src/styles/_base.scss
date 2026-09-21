@@ -5,6 +5,8 @@
 }
 
 html {
+  scroll-behavior: smooth;
+
   font-family:
     Inter,
     system-ui,
@@ -12,6 +14,7 @@ html {
     BlinkMacSystemFont,
     'Segoe UI',
     sans-serif;
+
   color: var(--color-text);
   background: var(--color-background);
 }

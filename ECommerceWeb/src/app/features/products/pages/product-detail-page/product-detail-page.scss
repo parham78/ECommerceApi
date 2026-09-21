@@ -1,3 +1,9 @@
+.product-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
 .product-detail {
   display: grid;
   grid-template-columns: 1fr;
@@ -6,76 +12,322 @@
 
 .product-detail__media {
   overflow: hidden;
-  background: var(--color-surface);
+
+  background: linear-gradient(145deg, #eef6f2, var(--color-surface));
+
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
+  border-radius: 20px;
+
+  box-shadow:
+    0 1px 2px rgb(24 35 31 / 5%),
+    0 16px 40px rgb(24 35 31 / 7%);
 }
 
 .product-detail__content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
+  padding: var(--space-4) 0;
 }
 
 .product-detail__eyebrow {
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--space-3);
+
   color: var(--color-action);
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+
+  font-size: 0.75rem;
+  font-weight: 800;
+
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 h1 {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
 }
 
 .product-detail__sku {
-  margin: var(--space-3) 0 0;
+  margin: var(--space-4) 0 0;
+
   color: var(--color-text-secondary);
+  font-size: 0.875rem;
 }
 
 .product-detail__price {
-  margin: var(--space-6) 0 0;
-  font-size: 1.75rem;
-  font-weight: 700;
+  margin: var(--space-8) 0 0;
+
+  color: var(--color-text);
+
+  font-size: 2rem;
+  font-weight: 800;
 }
 
 .product-detail__stock {
   margin: var(--space-3) 0 0;
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
   color: var(--color-action);
-  font-weight: 600;
+
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.product-detail__stock span {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+  background: var(--color-action);
 }
 
 .product-detail__stock--out {
   color: var(--color-danger);
 }
 
-.product-detail__back {
-  display: inline-block;
-  margin-bottom: var(--space-6);
-  color: var(--color-action);
+.product-detail__purchase {
+  width: 100%;
+
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+
+  border-top: 1px solid var(--color-border);
+}
+
+.product-detail__purchase-label {
+  margin: 0 0 var(--space-3);
+
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
   font-weight: 600;
+}
+
+.product-detail__button {
+  width: 100%;
+  min-height: 52px;
+
+  padding: 0 var(--space-6);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  font-weight: 800;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.product-detail__button--primary {
+  border: 1px solid var(--color-action);
+
+  background: var(--color-action);
+  color: white;
+
+  box-shadow: 0 8px 20px rgb(20 91 72 / 20%);
+}
+
+.product-detail__button--primary:hover:not(:disabled) {
+  background: var(--color-action-hover);
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 12px 25px rgb(20 91 72 / 24%);
+}
+
+.product-detail__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.product-basket {
+  padding: var(--space-5);
+
+  background: #edf6f1;
+
+  border: 1px solid #cce2d7;
+  border-radius: 16px;
+}
+
+.product-basket__header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.product-basket__status {
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  color: var(--color-action);
+
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.product-basket__status span {
+  width: 9px;
+  height: 9px;
+
+  border-radius: 50%;
+  background: var(--color-action);
+}
+
+.product-basket__subtotal {
+  margin: var(--space-2) 0 0;
+
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.product-basket__view {
+  color: var(--color-action);
+
+  font-size: 0.875rem;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+.product-basket__view:hover {
+  text-decoration: underline;
+}
+
+.product-basket__actions {
+  margin-top: var(--space-5);
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.product-quantity {
+  display: grid;
+  grid-template-columns: 44px 52px 44px;
+
+  overflow: hidden;
+
+  background: white;
+
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.product-quantity button {
+  height: 44px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--color-action);
+
+  font-size: 1.25rem;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.product-quantity button:hover:not(:disabled) {
+  background: #dceee5;
+}
+
+.product-quantity button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.product-quantity span {
+  display: grid;
+  place-items: center;
+
+  font-weight: 800;
+}
+
+.product-basket__remove {
+  min-height: 44px;
+
+  padding: 0 var(--space-4);
+
+  border: 1px solid #e3b9bc;
+  border-radius: 10px;
+
+  background: white;
+  color: var(--color-danger);
+
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.product-basket__remove:hover:not(:disabled) {
+  background: #fff0f1;
+}
+
+.product-detail__basket-message {
+  margin: var(--space-4) 0 0;
+
+  color: var(--color-action);
+
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.product-detail__basket-error {
+  margin: var(--space-4) 0 0;
+
+  color: var(--color-danger);
+
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.product-detail__back {
+  display: inline-flex;
+  align-items: center;
+
+  margin-bottom: var(--space-8);
+  padding: var(--space-2) var(--space-3);
+
+  border-radius: 8px;
+
+  color: var(--color-action);
+
+  font-weight: 700;
   text-decoration: none;
 }
 
 .product-detail__back:hover {
-  text-decoration: underline;
-}
-
-.product-detail__back:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
+  background: #e4f1eb;
 }
 
 .product-state {
-  padding: var(--space-10) var(--space-6);
+  padding: var(--space-12) var(--space-6);
+
   background: var(--color-surface);
+
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
+
   text-align: center;
 }
 
@@ -89,56 +341,82 @@ h1 {
 }
 
 .product-state__actions {
-  margin-top: var(--space-5);
+  margin-top: var(--space-6);
+
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+
   gap: var(--space-3);
 }
 
 .product-state__actions button,
 .product-state__actions a {
-  min-height: 44px;
-  padding: 0 var(--space-4);
+  min-height: 46px;
+
+  padding: 0 var(--space-5);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-control);
-  font-weight: 600;
+
+  border-radius: 10px;
+
+  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
 }
 
 .product-state__actions button {
   border: 0;
+
   background: var(--color-action);
   color: white;
 }
 
-.product-state__actions button:hover {
-  background: var(--color-action-hover);
-}
-
 .product-state__actions a {
   border: 1px solid var(--color-border);
+
   background: var(--color-surface);
-  color: var(--color-text);
 }
 
-.product-state__actions a:hover {
-  border-color: var(--color-action);
-}
-
-.product-state__actions button:focus-visible,
-.product-state__actions a:focus-visible {
+button:focus-visible,
+a:focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 3px;
 }
 
 @media (min-width: 768px) {
   .product-detail {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
-    gap: var(--space-10);
+    grid-template-columns:
+      minmax(0, 1.08fr)
+      minmax(340px, 0.92fr);
+
+    align-items: center;
+
+    gap: var(--space-12);
+  }
+
+  .product-detail__content {
+    padding: var(--space-8) 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .product-basket__header {
+    flex-direction: column;
+  }
+
+  .product-basket__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .product-quantity {
+    width: fit-content;
+  }
+
+  .product-basket__remove {
+    width: 100%;
   }
 }

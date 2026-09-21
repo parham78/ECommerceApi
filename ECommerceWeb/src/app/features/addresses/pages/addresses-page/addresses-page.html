@@ -1,0 +1,320 @@
+<section class="addresses-page">
+  <header class="addresses-header">
+    <div>
+      <p class="addresses-eyebrow">Your account</p>
+
+      <h1>My addresses</h1>
+
+      <p>Manage the shipping addresses you can use during checkout.</p>
+    </div>
+
+    <button type="button" class="addresses-header__add" (click)="openCreateForm()">
+      + Add address
+    </button>
+  </header>
+
+  @if (isFormOpen()) {
+    <section class="address-form-panel">
+      <div class="address-form-panel__heading">
+        <div>
+          <p class="addresses-eyebrow">
+            @if (editingAddress()) {
+              Edit address
+            } @else {
+              New address
+            }
+          </p>
+
+          <h2>
+            @if (editingAddress()) {
+              Update your address
+            } @else {
+              Add a shipping address
+            }
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="address-form-panel__close"
+          (click)="closeForm()"
+          [disabled]="isSaving()"
+          aria-label="Close address form"
+        >
+          ×
+        </button>
+      </div>
+
+      <form class="address-form" [formGroup]="addressForm" (ngSubmit)="saveAddress()">
+        <div class="address-form__grid">
+          <label>
+            <span>Label</span>
+
+            <input type="text" formControlName="label" maxlength="50" placeholder="Home, Work..." />
+
+            @if (addressForm.controls.label.touched && addressForm.controls.label.invalid) {
+              <small>Label is required.</small>
+            }
+          </label>
+
+          <label>
+            <span>Recipient name</span>
+
+            <input
+              type="text"
+              formControlName="recipientName"
+              maxlength="100"
+              placeholder="Full name"
+            />
+
+            @if (
+              addressForm.controls.recipientName.touched &&
+              addressForm.controls.recipientName.invalid
+            ) {
+              <small>Recipient name is required.</small>
+            }
+          </label>
+
+          <label class="address-form__wide">
+            <span>Address line 1</span>
+
+            <input
+              type="text"
+              formControlName="addressLine1"
+              maxlength="200"
+              placeholder="Street address"
+            />
+
+            @if (
+              addressForm.controls.addressLine1.touched && addressForm.controls.addressLine1.invalid
+            ) {
+              <small>Address is required.</small>
+            }
+          </label>
+
+          <label class="address-form__wide">
+            <span>
+              Address line 2
+              <em>Optional</em>
+            </span>
+
+            <input
+              type="text"
+              formControlName="addressLine2"
+              maxlength="200"
+              placeholder="Apartment, suite, unit..."
+            />
+          </label>
+
+          <label>
+            <span>City</span>
+
+            <input type="text" formControlName="city" maxlength="100" />
+
+            @if (addressForm.controls.city.touched && addressForm.controls.city.invalid) {
+              <small>City is required.</small>
+            }
+          </label>
+
+          <label>
+            <span>Province / State</span>
+
+            <input type="text" formControlName="province" maxlength="100" />
+
+            @if (addressForm.controls.province.touched && addressForm.controls.province.invalid) {
+              <small>Province or state is required.</small>
+            }
+          </label>
+
+          <label>
+            <span>Postal code</span>
+
+            <input type="text" formControlName="postalCode" maxlength="20" />
+
+            @if (
+              addressForm.controls.postalCode.touched && addressForm.controls.postalCode.invalid
+            ) {
+              <small>Postal code is required.</small>
+            }
+          </label>
+
+          <label>
+            <span>Country</span>
+
+            <input type="text" formControlName="country" maxlength="100" />
+
+            @if (addressForm.controls.country.touched && addressForm.controls.country.invalid) {
+              <small>Country is required.</small>
+            }
+          </label>
+
+          <label class="address-form__wide">
+            <span>
+              Phone number
+              <em>Optional</em>
+            </span>
+
+            <input type="tel" formControlName="phoneNumber" maxlength="30" />
+          </label>
+        </div>
+
+        @if (editingAddress()?.isDefault) {
+          <div class="default-address-note">
+            <strong>Default address</strong>
+
+            <span> To change your default address, mark another saved address as default. </span>
+          </div>
+        } @else {
+          <label class="default-checkbox">
+            <input type="checkbox" formControlName="isDefault" />
+
+            <span> Use this as my default shipping address </span>
+          </label>
+        }
+
+        @if (saveError()) {
+          <div class="address-message address-message--error">
+            {{ saveError() }}
+          </div>
+        }
+
+        <div class="address-form__actions">
+          <button
+            type="button"
+            class="button button--secondary"
+            (click)="closeForm()"
+            [disabled]="isSaving()"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="button button--primary" [disabled]="isSaving()">
+            @if (isSaving()) {
+              Saving...
+            } @else if (editingAddress()) {
+              Save changes
+            } @else {
+              Add address
+            }
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+
+  @if (isLoading()) {
+    <div class="addresses-state">Loading your addresses...</div>
+  } @else if (loadError()) {
+    <div class="addresses-state addresses-state--error">
+      {{ loadError() }}
+    </div>
+  } @else if (addresses().length === 0) {
+    <div class="addresses-empty">
+      <div class="addresses-empty__icon">+</div>
+
+      <h2>No saved addresses yet.</h2>
+
+      <p>Add a shipping address now so checkout is ready when you need it.</p>
+
+      <button type="button" class="button button--primary" (click)="openCreateForm()">
+        Add your first address
+      </button>
+    </div>
+  } @else {
+    @if (deleteError()) {
+      <div class="address-message address-message--error">
+        {{ deleteError() }}
+      </div>
+    }
+
+    <div class="addresses-grid">
+      @for (address of addresses(); track address.id) {
+        <article class="address-card" [class.address-card--default]="address.isDefault">
+          <div class="address-card__heading">
+            <div>
+              <span class="address-card__label">
+                {{ address.label }}
+              </span>
+
+              @if (address.isDefault) {
+                <span class="address-card__default"> Default </span>
+              }
+            </div>
+
+            <span class="address-card__number"> #{{ address.id }} </span>
+          </div>
+
+          <h2>
+            {{ address.recipientName }}
+          </h2>
+
+          <address>
+            {{ address.addressLine1 }}
+
+            @if (address.addressLine2) {
+              <br />
+              {{ address.addressLine2 }}
+            }
+
+            <br />
+
+            {{ address.city }},
+            {{ address.province }}
+            {{ address.postalCode }}
+
+            <br />
+
+            {{ address.country }}
+          </address>
+
+          @if (address.phoneNumber) {
+            <p class="address-card__phone">
+              {{ address.phoneNumber }}
+            </p>
+          }
+
+          @if (deleteConfirmId() === address.id) {
+            <div class="delete-confirmation">
+              <p>Delete this address?</p>
+
+              <div>
+                <button
+                  type="button"
+                  (click)="cancelDelete()"
+                  [disabled]="deletingAddressId() === address.id"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  class="delete-confirmation__confirm"
+                  (click)="deleteAddress(address.id)"
+                  [disabled]="deletingAddressId() === address.id"
+                >
+                  @if (deletingAddressId() === address.id) {
+                    Deleting...
+                  } @else {
+                    Delete
+                  }
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="address-card__actions">
+              <button type="button" (click)="openEditForm(address)">Edit</button>
+
+              <button
+                type="button"
+                class="address-card__delete"
+                (click)="requestDelete(address.id)"
+              >
+                Delete
+              </button>
+            </div>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

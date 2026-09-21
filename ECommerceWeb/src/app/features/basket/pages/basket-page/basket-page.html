@@ -1,0 +1,190 @@
+<section class="basket-page">
+  <header class="basket-header">
+    <div>
+      <p class="eyebrow">Shopping basket</p>
+
+      <h1>Your basket</h1>
+    </div>
+
+    <a class="continue-link" routerLink="/products"> ← Continue shopping </a>
+  </header>
+
+  @if (isLoading()) {
+    <div class="basket-state">
+      <p>Loading your basket...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="basket-state">
+      <h2>Something went wrong</h2>
+
+      <p>
+        {{ errorMessage() }}
+      </p>
+    </div>
+  } @else if (basket(); as basket) {
+    @if (basket.items.length === 0) {
+      <div class="basket-state basket-state--empty">
+        <div class="basket-state__icon">Bag</div>
+
+        <h2>Your basket is empty</h2>
+
+        <p>Browse the catalog and add something you like.</p>
+
+        <a class="primary-link" routerLink="/products"> Browse products </a>
+      </div>
+    } @else {
+      @if (actionError()) {
+        <p class="action-error">
+          {{ actionError() }}
+        </p>
+      }
+
+      <div class="basket-layout">
+        <div class="basket-items">
+          @for (item of basket.items; track item.id) {
+            <article class="basket-item">
+              <a
+                class="basket-item__image"
+                [routerLink]="['/products', item.productId]"
+                [attr.aria-label]="'View ' + item.productName"
+              >
+                <app-product-image [sku]="item.productSku" [productName]="item.productName" />
+              </a>
+
+              <div class="basket-item__content">
+                <div class="basket-item__top">
+                  <div>
+                    <p class="basket-item__sku">
+                      {{ item.productSku }}
+                    </p>
+
+                    <h2>
+                      <a [routerLink]="['/products', item.productId]">
+                        {{ item.productName }}
+                      </a>
+                    </h2>
+
+                    <p class="basket-item__unit-price">
+                      {{ item.unitPrice | currency: 'CAD' }}
+                      each
+                    </p>
+                  </div>
+
+                  <strong class="basket-item__total">
+                    {{ item.lineTotal | currency: 'CAD' }}
+                  </strong>
+                </div>
+
+                <div class="basket-item__bottom">
+                  <div class="quantity-group">
+                    <span class="quantity-group__label"> Quantity </span>
+
+                    <div class="quantity-control">
+                      <button
+                        type="button"
+                        [disabled]="item.quantity <= 1 || pendingItemId() === item.id"
+                        [attr.aria-label]="'Decrease quantity of ' + item.productName"
+                        (click)="decreaseQuantity(item)"
+                      >
+                        &minus;
+                      </button>
+
+                      <span>
+                        {{ item.quantity }}
+                      </span>
+
+                      <button
+                        type="button"
+                        [disabled]="
+                          item.quantity >= item.availableStock || pendingItemId() === item.id
+                        "
+                        [attr.aria-label]="'Increase quantity of ' + item.productName"
+                        (click)="increaseQuantity(item)"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="basket-item__availability">
+                    <span class="status-dot"></span>
+
+                    {{ item.availableStock }}
+                    available
+                  </div>
+
+                  <button
+                    type="button"
+                    class="remove-button"
+                    [disabled]="pendingItemId() === item.id"
+                    (click)="removeItem(item.id)"
+                  >
+                    @if (pendingItemId() === item.id) {
+                      Updating...
+                    } @else {
+                      Remove
+                    }
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+
+        <aside class="summary">
+          <p class="eyebrow">Order summary</p>
+
+          <h2>Summary</h2>
+
+          <div class="summary__row">
+            <span> Products </span>
+
+            <span>
+              {{ basket.totalPrice | currency: 'CAD' }}
+            </span>
+          </div>
+
+          <div class="summary__row summary__row--muted">
+            <span> Shipping </span>
+
+            <span> Calculated later </span>
+          </div>
+
+          <div class="summary__divider"></div>
+
+          <div class="summary__total">
+            <span> Total </span>
+
+            <strong>
+              {{ basket.totalPrice | currency: 'CAD' }}
+            </strong>
+          </div>
+
+          <p class="summary__note">
+            Taxes and shipping are not included yet. This is a demo store and no payments are
+            collected.
+          </p>
+
+          <a class="checkout-link" routerLink="/checkout">
+            Proceed to checkout
+
+            <span aria-hidden="true"> → </span>
+          </a>
+
+          <button
+            type="button"
+            class="clear-button"
+            [disabled]="isClearing()"
+            (click)="clearBasket()"
+          >
+            @if (isClearing()) {
+              Clearing basket...
+            } @else {
+              Clear basket
+            }
+          </button>
+        </aside>
+      </div>
+    }
+  }
+</section>
