@@ -5,10 +5,10 @@
 }
 
 .product-detail__media {
+  overflow: hidden;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
-  overflow: hidden;
 }
 
 .product-detail__content {
@@ -54,6 +54,23 @@ h1 {
   color: var(--color-danger);
 }
 
+.product-detail__back {
+  display: inline-block;
+  margin-bottom: var(--space-6);
+  color: var(--color-action);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.product-detail__back:hover {
+  text-decoration: underline;
+}
+
+.product-detail__back:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
 .product-state {
   padding: var(--space-10) var(--space-6);
   background: var(--color-surface);
@@ -71,26 +88,57 @@ h1 {
   color: var(--color-text-secondary);
 }
 
+.product-state__actions {
+  margin-top: var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.product-state__actions button,
+.product-state__actions a {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.product-state__actions button {
+  border: 0;
+  background: var(--color-action);
+  color: white;
+}
+
+.product-state__actions button:hover {
+  background: var(--color-action-hover);
+}
+
+.product-state__actions a {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.product-state__actions a:hover {
+  border-color: var(--color-action);
+}
+
+.product-state__actions button:focus-visible,
+.product-state__actions a:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
 @media (min-width: 768px) {
   .product-detail {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
     gap: var(--space-10);
   }
-}
-.product-detail__back {
-  display: inline-block;
-  margin-bottom: var(--space-6);
-  color: var(--color-action);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.product-detail__back:hover {
-  text-decoration: underline;
-}
-
-.product-detail__back:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
 }

@@ -1,4 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -16,27 +17,49 @@ export class ProductDetailPage {
   private readonly route = inject(ActivatedRoute);
   private readonly productsApi = inject(ProductsApi);
 
+  private readonly productId = Number(this.route.snapshot.paramMap.get('id'));
+
   readonly product = signal<ProductResponseDto | null>(null);
   readonly isLoading = signal(true);
   readonly errorMessage = signal<string | null>(null);
+  readonly canRetry = signal(false);
 
   constructor() {
-    const productId = Number(this.route.snapshot.paramMap.get('id'));
-
-    if (!Number.isInteger(productId) || productId <= 0) {
+    if (!Number.isInteger(this.productId) || this.productId <= 0) {
       this.isLoading.set(false);
       this.errorMessage.set('Invalid product.');
       return;
     }
 
-    this.productsApi.getById(productId).subscribe({
+    this.loadProduct();
+  }
+
+  retry(): void {
+    this.loadProduct();
+  }
+
+  private loadProduct(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+    this.canRetry.set(false);
+
+    this.productsApi.getById(this.productId).subscribe({
       next: (product) => {
         this.product.set(product);
         this.isLoading.set(false);
       },
-      error: () => {
-        this.errorMessage.set('Product could not be found.');
+
+      error: (error: HttpErrorResponse) => {
         this.isLoading.set(false);
+
+        if (error.status === 404) {
+          this.errorMessage.set('Product could not be found.');
+          return;
+        }
+
+        this.errorMessage.set('We could not load this product. Please try again.');
+
+        this.canRetry.set(true);
       },
     });
   }

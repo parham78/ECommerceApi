@@ -5,7 +5,16 @@
 } @else if (errorMessage()) {
   <div class="product-state">
     <h1>Product unavailable</h1>
+
     <p>{{ errorMessage() }}</p>
+
+    <div class="product-state__actions">
+      @if (canRetry()) {
+        <button type="button" (click)="retry()">Retry</button>
+      }
+
+      <a routerLink="/products"> Back to products </a>
+    </div>
   </div>
 } @else if (product(); as product) {
   <div class="product-page">
@@ -19,7 +28,9 @@
       <div class="product-detail__content">
         <p class="product-detail__eyebrow">Product</p>
 
-        <h1>{{ product.name }}</h1>
+        <h1>
+          {{ product.name }}
+        </h1>
 
         <p class="product-detail__sku">SKU: {{ product.sku }}</p>
 
