@@ -1,59 +1,65 @@
 # ECommerceWeb
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.0.
+Angular frontend for the ecommerce portfolio project.
 
-## Development server
+## Development
 
-To start a local development server, run:
+Run the ASP.NET Core backend from the repository root:
 
-```bash
-ng serve
+```powershell
+cd C:\csharp-project\OrderManagementApi
+dotnet run
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+The backend runs at:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+http://localhost:5289
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Run the Angular frontend in a second terminal:
 
-```bash
-ng generate --help
+```powershell
+cd C:\csharp-project\OrderManagementApi\ECommerceWeb
+npm start
 ```
 
-## Building
+The frontend runs at:
 
-To build the project run:
-
-```bash
-ng build
+```text
+http://localhost:4200
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+During development, Angular proxies `/api/**` requests to the ASP.NET Core backend.
 
-## Running unit tests
+## Current frontend scope
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+The current storefront includes:
 
-```bash
-ng test
+- public product catalog
+- real backend product data
+- responsive product cards
+- local product imagery
+- loading, empty, and error states
+- retry behavior
+- backend-driven pagination metadata
+- URL-based page and page-size state
+- responsive page-size selector
+- 404 page
+- Canadian currency formatting
+
+Authentication, basket, checkout, customer account, and admin features are planned for later milestones.
+
+## Commands
+
+Production build:
+
+```powershell
+npm run build
 ```
 
-## Running end-to-end tests
+Run tests once:
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```powershell
+npm test -- --watch=false
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
