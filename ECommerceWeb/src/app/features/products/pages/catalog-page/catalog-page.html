@@ -6,12 +6,21 @@
     </div>
   </div>
 
-  <div>
-    @for (product of products(); track product.id) {
-      <p>
-        {{ product.name }}
-        — {{ product.price }} — Stock: {{ product.stock }}
-      </p>
-    }
-  </div>
+  @if (isLoading()) {
+    <p role="status">Loading products...</p>
+  } @else if (errorMessage()) {
+    <div role="alert">
+      <p>{{ errorMessage() }}</p>
+
+      <button type="button" (click)="loadProducts()">Retry</button>
+    </div>
+  } @else if (products().length === 0) {
+    <p>No products found.</p>
+  } @else {
+    <div class="catalog-grid">
+      @for (product of products(); track product.id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
+  }
 </section>

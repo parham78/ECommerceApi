@@ -1,0 +1,10 @@
+.product-image {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  background: #eef1ee;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: var(--space-4);
+}
