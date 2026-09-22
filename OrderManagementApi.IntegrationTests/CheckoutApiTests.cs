@@ -518,8 +518,8 @@ public class CheckoutApiTests
     }
 
     private async Task<int> SeedProductAsync(
-        int stock,
-        decimal price)
+    int stock,
+    decimal price)
     {
         using var scope =
             _factory.Services.CreateScope();
@@ -529,18 +529,24 @@ public class CheckoutApiTests
                 .GetRequiredService<
                     OrderManagementDbContext>();
 
+        var categoryId =
+            await context.Categories
+                .Where(c => c.Slug == "workspace")
+                .Select(c => c.Id)
+                .SingleAsync();
+
         var product =
             new Product
             {
-                Name =
-                    "Checkout Integration Product",
+                Name = "Checkout Integration Product",
 
                 Sku =
                     $"CHECKOUT-{Guid.NewGuid():N}",
 
                 Price = price,
                 Stock = stock,
-                IsActive = true
+                IsActive = true,
+                CategoryId = categoryId
             };
 
         context.Products.Add(product);

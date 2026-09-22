@@ -14,6 +14,12 @@
 
         <a class="store-header__nav-link" routerLink="/basket"> Basket </a>
       }
+
+      @if (authSession.isAuthenticated() && authSession.roles().includes('Admin')) {
+        <a class="store-header__nav-link store-header__nav-link--admin" routerLink="/admin">
+          Admin Dashboard
+        </a>
+      }
     </nav>
 
     <div class="store-header__account">

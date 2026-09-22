@@ -63,6 +63,20 @@
   background: var(--color-action-soft);
   color: var(--color-action);
 }
+.store-header__nav-link--admin {
+  color: var(--color-action);
+}
+
+.store-header__nav-link--admin::before {
+  content: '•';
+
+  margin-right: var(--space-2);
+}
+
+.store-header__nav-link--admin:hover {
+  background: var(--color-action-soft);
+  color: var(--color-action);
+}
 
 .store-header__account {
   display: flex;

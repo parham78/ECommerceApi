@@ -40,6 +40,11 @@ export class LoginPage {
         this.authSession.setToken(response.token);
         this.isSubmitting.set(false);
 
+        if (this.authSession.roles().includes('Admin')) {
+          void this.router.navigate(['/admin']);
+          return;
+        }
+
         void this.router.navigate(['/products']);
       },
 

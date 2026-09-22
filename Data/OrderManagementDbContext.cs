@@ -11,6 +11,7 @@ public class OrderManagementDbContext
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Basket> Baskets { get; set; }
     public DbSet<BasketItem> BasketItems { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     public OrderManagementDbContext(
         DbContextOptions<OrderManagementDbContext> options)
@@ -45,6 +46,29 @@ public class OrderManagementDbContext
     .WithOne()
     .HasForeignKey<Customer>(c => c.UserId)
     .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Category>()
+        .Property(c => c.Name)
+        .HasMaxLength(100)
+        .IsRequired();
+
+        modelBuilder.Entity<Category>()
+            .Property(c => c.Slug)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        modelBuilder.Entity<Category>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
+
+        modelBuilder.Entity<Category>()
+            .HasIndex(c => c.Slug)
+            .IsUnique();
+
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Address>()
         .HasOne(a => a.Customer)

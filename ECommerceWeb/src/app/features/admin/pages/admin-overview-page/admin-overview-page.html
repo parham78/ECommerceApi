@@ -1,0 +1,199 @@
+<section class="admin-overview">
+  <header class="admin-overview__header">
+    <div>
+      <p class="admin-overview__eyebrow">Administration</p>
+
+      <h1>Overview</h1>
+
+      <p class="admin-overview__description">
+        Monitor orders, product activity, inventory, and sales performance.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="admin-overview__refresh"
+      (click)="loadDashboard()"
+      [disabled]="isLoading()"
+    >
+      Refresh
+    </button>
+  </header>
+
+  @if (isLoading()) {
+    <div class="admin-overview__state" role="status">Loading dashboard...</div>
+  } @else if (errorMessage()) {
+    <div class="admin-overview__state admin-overview__state--error" role="alert">
+      <p>
+        {{ errorMessage() }}
+      </p>
+
+      <button type="button" (click)="loadDashboard()">Try again</button>
+    </div>
+  } @else if (summary(); as dashboardSummary) {
+    <div class="dashboard-kpis">
+      <article class="kpi-card">
+        <p class="kpi-card__label">Total order value</p>
+
+        <p class="kpi-card__value">${{ dashboardSummary.totalRevenue.toFixed(2) }}</p>
+      </article>
+
+      <article class="kpi-card">
+        <p class="kpi-card__label">Total orders</p>
+
+        <p class="kpi-card__value">
+          {{ dashboardSummary.totalOrders }}
+        </p>
+      </article>
+
+      <article class="kpi-card">
+        <p class="kpi-card__label">Average order value</p>
+
+        <p class="kpi-card__value">${{ dashboardSummary.averageOrderValue.toFixed(2) }}</p>
+      </article>
+
+      <article class="kpi-card">
+        <p class="kpi-card__label">Active products</p>
+
+        <p class="kpi-card__value">
+          {{ dashboardSummary.activeProducts }}
+        </p>
+      </article>
+    </div>
+
+    <section class="dashboard-panel revenue-panel">
+      <div class="dashboard-panel__header">
+        <div>
+          <p class="dashboard-panel__eyebrow">Performance</p>
+
+          <h2>Order value — last 6 months</h2>
+        </div>
+      </div>
+
+      <div class="revenue-chart">
+        @for (point of revenue(); track point.year + '-' + point.month) {
+          <div class="revenue-chart__column">
+            <div class="revenue-chart__value">${{ point.revenue.toFixed(0) }}</div>
+
+            <div class="revenue-chart__plot">
+              <div
+                class="revenue-chart__bar"
+                [style.height.%]="revenueBarHeight(point.revenue)"
+                [attr.title]="
+                  monthLabel(point.year, point.month) + ': $' + point.revenue.toFixed(2)
+                "
+              ></div>
+            </div>
+
+            <div class="revenue-chart__label">
+              <strong>
+                {{ monthLabel(point.year, point.month) }}
+              </strong>
+
+              <span>
+                {{ point.orders }}
+                {{ point.orders === 1 ? 'order' : 'orders' }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <div class="dashboard-grid">
+      <section class="dashboard-panel">
+        <div class="dashboard-panel__header">
+          <div>
+            <p class="dashboard-panel__eyebrow">Orders</p>
+
+            <h2>Orders by status</h2>
+          </div>
+        </div>
+
+        <div class="status-list">
+          @for (item of ordersByStatus(); track item.status) {
+            <div class="status-row">
+              <span>
+                {{ item.status }}
+              </span>
+
+              <strong>
+                {{ item.count }}
+              </strong>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="dashboard-panel">
+        <div class="dashboard-panel__header">
+          <div>
+            <p class="dashboard-panel__eyebrow">Inventory</p>
+
+            <h2>Low stock</h2>
+          </div>
+        </div>
+
+        @if (lowStockProducts().length === 0) {
+          <p class="dashboard-empty">No low-stock products.</p>
+        } @else {
+          <div class="stock-list">
+            @for (product of lowStockProducts(); track product.id) {
+              <div class="stock-row">
+                <div>
+                  <strong>
+                    {{ product.name }}
+                  </strong>
+
+                  <span>
+                    {{ product.sku }}
+                  </span>
+                </div>
+
+                <strong>
+                  {{ product.stock }}
+                </strong>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </div>
+
+    <section class="dashboard-panel dashboard-panel--wide">
+      <div class="dashboard-panel__header">
+        <div>
+          <p class="dashboard-panel__eyebrow">Activity</p>
+
+          <h2>Recent orders</h2>
+        </div>
+      </div>
+
+      @if (recentOrders().length === 0) {
+        <p class="dashboard-empty">No recent orders.</p>
+      } @else {
+        <div class="recent-orders">
+          @for (order of recentOrders(); track order.id) {
+            <div class="recent-order-row">
+              <div>
+                <strong> Order #{{ order.id }} </strong>
+
+                <span>
+                  {{ order.customerName }}
+                </span>
+              </div>
+
+              <div class="recent-order-row__meta">
+                <span>
+                  {{ order.status }}
+                </span>
+
+                <strong> ${{ order.totalPrice.toFixed(2) }} </strong>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+</section>

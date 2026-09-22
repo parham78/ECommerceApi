@@ -1,0 +1,248 @@
+<section class="admin-products">
+  <header class="admin-products__header">
+    <div>
+      <p class="admin-products__eyebrow">Catalog</p>
+
+      <h1>Products</h1>
+
+      <p class="admin-products__description">
+        Manage product availability, stock, pricing, and catalog status.
+      </p>
+    </div>
+  </header>
+
+  <div class="admin-products__toolbar">
+    <div class="admin-products__filters">
+      <button
+        type="button"
+        [class.admin-products__filter--active]="activeFilter() === 'all'"
+        (click)="setActiveFilter('all')"
+      >
+        All
+      </button>
+
+      <button
+        type="button"
+        [class.admin-products__filter--active]="activeFilter() === 'active'"
+        (click)="setActiveFilter('active')"
+      >
+        Active
+      </button>
+
+      <button
+        type="button"
+        [class.admin-products__filter--active]="activeFilter() === 'inactive'"
+        (click)="setActiveFilter('inactive')"
+      >
+        Inactive
+      </button>
+    </div>
+
+    <div class="admin-products__count">
+      {{ totalCount() }}
+      {{ totalCount() === 1 ? 'product' : 'products' }}
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="admin-products__state" role="status">Loading products...</div>
+  } @else if (errorMessage()) {
+    <div class="admin-products__state admin-products__state--error" role="alert">
+      <p>
+        {{ errorMessage() }}
+      </p>
+
+      <button type="button" (click)="loadProducts()">Try again</button>
+    </div>
+  } @else {
+    <div class="admin-products__table-wrap">
+      <table class="admin-products__table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+
+            <th class="admin-products__actions-heading">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (product of products(); track product.id) {
+            <tr>
+              <td>
+                <div class="admin-product-name">
+                  <strong>
+                    {{ product.name }}
+                  </strong>
+
+                  <span>
+                    {{ product.sku }}
+                  </span>
+                </div>
+              </td>
+
+              <td>
+                {{ product.categoryName }}
+              </td>
+
+              <td>${{ product.price.toFixed(2) }}</td>
+
+              <td>
+                <span class="admin-stock" [class.admin-stock--low]="product.stock <= 5">
+                  {{ product.stock }}
+                </span>
+              </td>
+
+              <td>
+                <span
+                  class="admin-product-status"
+                  [class.admin-product-status--inactive]="!product.isActive"
+                >
+                  {{ product.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+
+              <td class="admin-products__actions">
+                <button type="button" class="admin-products__action" (click)="openEdit(product)">
+                  Edit
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="admin-products__empty">No products found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="admin-products__pagination">
+        <button type="button" (click)="previousPage()" [disabled]="currentPage() <= 1">
+          Previous
+        </button>
+
+        <span> Page {{ currentPage() }} of {{ totalPages() }} </span>
+
+        <button type="button" (click)="nextPage()" [disabled]="currentPage() >= totalPages()">
+          Next
+        </button>
+      </div>
+    }
+  }
+
+  @if (editingProduct(); as product) {
+    <div class="admin-edit-backdrop" (click)="closeEdit()">
+      <section
+        class="admin-edit-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-product-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header class="admin-edit-panel__header">
+          <div>
+            <p class="admin-edit-panel__eyebrow">Product</p>
+
+            <h2 id="edit-product-title">Edit {{ product.name }}</h2>
+          </div>
+
+          <button
+            type="button"
+            class="admin-edit-panel__close"
+            (click)="closeEdit()"
+            [disabled]="isSaving()"
+            aria-label="Close edit product"
+          >
+            ×
+          </button>
+        </header>
+
+        <form class="admin-edit-form" [formGroup]="editForm" (ngSubmit)="saveProduct()">
+          <div class="admin-edit-form__field">
+            <label for="product-name"> Name </label>
+
+            <input id="product-name" type="text" formControlName="name" />
+
+            @if (editForm.controls.name.touched && editForm.controls.name.invalid) {
+              <span class="admin-edit-form__error"> Enter a valid product name. </span>
+            }
+          </div>
+
+          <div class="admin-edit-form__field">
+            <label for="product-sku"> SKU </label>
+
+            <input id="product-sku" type="text" formControlName="sku" />
+
+            @if (editForm.controls.sku.touched && editForm.controls.sku.invalid) {
+              <span class="admin-edit-form__error"> Enter a valid SKU. </span>
+            }
+          </div>
+
+          <div class="admin-edit-form__row">
+            <div class="admin-edit-form__field">
+              <label for="product-price"> Price </label>
+
+              <input
+                id="product-price"
+                type="number"
+                min="0.01"
+                step="0.01"
+                formControlName="price"
+              />
+            </div>
+
+            <div class="admin-edit-form__field">
+              <label for="product-stock"> Stock </label>
+
+              <input id="product-stock" type="number" min="0" step="1" formControlName="stock" />
+            </div>
+          </div>
+
+          <div class="admin-edit-form__field">
+            <label for="product-category"> Category </label>
+
+            <select id="product-category" formControlName="categoryId">
+              @for (category of categories(); track category.id) {
+                <option [value]="category.id">
+                  {{ category.name }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <label class="admin-edit-form__checkbox">
+            <input type="checkbox" formControlName="isActive" />
+
+            <span> Product is active </span>
+          </label>
+
+          @if (editErrorMessage()) {
+            <div class="admin-edit-form__server-error" role="alert">
+              {{ editErrorMessage() }}
+            </div>
+          }
+
+          <footer class="admin-edit-form__actions">
+            <button
+              type="button"
+              class="admin-edit-form__cancel"
+              (click)="closeEdit()"
+              [disabled]="isSaving()"
+            >
+              Cancel
+            </button>
+
+            <button type="submit" class="admin-edit-form__save" [disabled]="isSaving()">
+              {{ isSaving() ? 'Saving...' : 'Save changes' }}
+            </button>
+          </footer>
+        </form>
+      </section>
+    </div>
+  }
+</section>

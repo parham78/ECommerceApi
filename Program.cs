@@ -17,6 +17,12 @@ builder.Services
             new JsonStringEnumConverter());
     });
 
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+builder.Services.AddScoped<
+    IAdminDashboardService,
+    AdminDashboardService>();
+
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();

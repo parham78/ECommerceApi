@@ -83,13 +83,20 @@ public class ProductsApiTests
                     .GetRequiredService<
                         OrderManagementDbContext>();
 
+            var categoryId =
+                await context.Categories
+                    .Where(c => c.Slug == "workspace")
+                    .Select(c => c.Id)
+                    .SingleAsync();
+
             var product = new Product
             {
                 Name = "Integration Test Keyboard",
                 Sku = $"TEST-{Guid.NewGuid():N}",
                 Price = 129.99m,
                 Stock = 15,
-                IsActive = true
+                IsActive = true,
+                CategoryId = categoryId
             };
 
             context.Products.Add(product);
@@ -169,13 +176,20 @@ public class ProductsApiTests
                     .GetRequiredService<
                         OrderManagementDbContext>();
 
+            var categoryId =
+                await context.Categories
+                    .Where(c => c.Slug == "workspace")
+                    .Select(c => c.Id)
+                    .SingleAsync();
+
             var product = new Product
             {
                 Name = "Inactive Integration Product",
                 Sku = $"INACTIVE-{Guid.NewGuid():N}",
                 Price = 50m,
                 Stock = 10,
-                IsActive = false
+                IsActive = false,
+                CategoryId = categoryId
             };
 
             context.Products.Add(product);
@@ -231,13 +245,20 @@ public class ProductsApiTests
             var context = scope.ServiceProvider
                 .GetRequiredService<OrderManagementDbContext>();
 
+            var categoryId =
+                await context.Categories
+                    .Where(c => c.Slug == "workspace")
+                    .Select(c => c.Id)
+                    .SingleAsync();
+
             var activeProduct = new Product
             {
                 Name = "Active Integration Product",
                 Sku = $"ACTIVE-{Guid.NewGuid():N}",
                 Price = 75m,
                 Stock = 5,
-                IsActive = true
+                IsActive = true,
+                CategoryId = categoryId
             };
 
             var inactiveProduct = new Product
@@ -246,7 +267,8 @@ public class ProductsApiTests
                 Sku = $"HIDDEN-{Guid.NewGuid():N}",
                 Price = 80m,
                 Stock = 5,
-                IsActive = false
+                IsActive = false,
+                CategoryId = categoryId
             };
 
             context.Products.AddRange(

@@ -1,0 +1,44 @@
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar__brand">
+      <a routerLink="/admin"> Supply Admin </a>
+    </div>
+
+    <nav class="admin-nav">
+      <a
+        routerLink="/admin"
+        routerLinkActive="admin-nav__link--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="admin-nav__link"
+      >
+        Overview
+      </a>
+
+      <a
+        routerLink="/admin/products"
+        routerLinkActive="admin-nav__link--active"
+        class="admin-nav__link"
+      >
+        Products
+      </a>
+
+      <a
+        routerLink="/admin/orders"
+        routerLinkActive="admin-nav__link--active"
+        class="admin-nav__link"
+      >
+        Orders
+      </a>
+    </nav>
+
+    <div class="admin-sidebar__footer">
+      <a routerLink="/" class="admin-sidebar__store-link"> Back to store </a>
+
+      <button type="button" class="admin-sidebar__sign-out" (click)="signOut()">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <router-outlet />
+  </main>
+</div>

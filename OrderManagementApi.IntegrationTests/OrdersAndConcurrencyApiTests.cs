@@ -727,6 +727,12 @@ public class OrdersAndConcurrencyApiTests
                 .GetRequiredService<
                     OrderManagementDbContext>();
 
+        var categoryId =
+            await context.Categories
+                .Where(c => c.Slug == "workspace")
+                .Select(c => c.Id)
+                .SingleAsync();
+
         var product =
             new Product
             {
@@ -738,7 +744,8 @@ public class OrdersAndConcurrencyApiTests
 
                 Price = price,
                 Stock = stock,
-                IsActive = true
+                IsActive = true,
+                CategoryId = categoryId
             };
 
         context.Products.Add(product);
