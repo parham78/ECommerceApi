@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../../../core/config/api-base-url';
 import { PagedResultDto } from '../../../shared/models/paged-result.dto';
+import { CategoryResponseDto } from './category.dto';
 import { ProductResponseDto } from './product.dto';
 import { ProductQuery } from './product-query';
 
@@ -19,6 +20,10 @@ export class ProductsApi {
 
     if (query.search) {
       params = params.set('search', query.search);
+    }
+
+    if (query.category) {
+      params = params.set('category', query.category);
     }
 
     if (query.minPrice !== undefined) {
@@ -45,7 +50,12 @@ export class ProductsApi {
       params,
     });
   }
+
   getById(id: number): Observable<ProductResponseDto> {
     return this.http.get<ProductResponseDto>(`${this.apiBaseUrl}/products/${id}`);
+  }
+
+  listCategories(): Observable<CategoryResponseDto[]> {
+    return this.http.get<CategoryResponseDto[]>(`${this.apiBaseUrl}/categories`);
   }
 }
