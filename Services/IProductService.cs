@@ -2,6 +2,7 @@ public interface IProductService
 {
     Task<PagedResultDto<ProductResponseDto>> GetAll(
         string? search,
+        string? category,
         decimal? minPrice,
         decimal? maxPrice,
         bool? inStock,

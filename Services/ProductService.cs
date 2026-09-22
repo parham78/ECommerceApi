@@ -12,6 +12,7 @@ public class ProductService : IProductService
 
     public async Task<PagedResultDto<ProductResponseDto>> GetAll(
         string? search,
+        string? category,
         decimal? minPrice,
         decimal? maxPrice,
         bool? inStock,
@@ -45,6 +46,15 @@ public class ProductService : IProductService
             query = query.Where(p =>
                 p.Name.Contains(search) ||
                 p.Sku.Contains(search));
+        }
+
+        if (!string.IsNullOrWhiteSpace(category))
+        {
+            var normalizedCategory =
+                category.Trim().ToLowerInvariant();
+
+            query = query.Where(p =>
+                p.Category.Slug == normalizedCategory);
         }
 
         if (minPrice.HasValue)
@@ -114,7 +124,10 @@ public class ProductService : IProductService
                 Name = p.Name,
                 Sku = p.Sku,
                 Price = p.Price,
-                Stock = p.Stock
+                Stock = p.Stock,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.Name,
+                CategorySlug = p.Category.Slug
             })
             .ToListAsync();
 
@@ -174,6 +187,9 @@ public class ProductService : IProductService
                 Price = p.Price,
                 Stock = p.Stock,
                 IsActive = p.IsActive,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.Name,
+                CategorySlug = p.Category.Slug,
                 RowVersion = p.RowVersion
             })
             .ToListAsync();
@@ -202,7 +218,10 @@ public class ProductService : IProductService
                 Name = p.Name,
                 Sku = p.Sku,
                 Price = p.Price,
-                Stock = p.Stock
+                Stock = p.Stock,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.Name,
+                CategorySlug = p.Category.Slug
             })
             .FirstOrDefaultAsync();
 
@@ -229,6 +248,9 @@ public class ProductService : IProductService
                 Price = p.Price,
                 Stock = p.Stock,
                 IsActive = p.IsActive,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.Name,
+                CategorySlug = p.Category.Slug,
                 RowVersion = p.RowVersion
             })
             .FirstOrDefaultAsync();
@@ -259,13 +281,23 @@ public class ProductService : IProductService
                 $"A product with SKU '{normalizedSku}' already exists.");
         }
 
+        var categoryExists = await _context.Categories
+            .AnyAsync(c => c.Id == dto.CategoryId);
+
+        if (!categoryExists)
+        {
+            throw new BadRequestException(
+                $"Category {dto.CategoryId} was not found.");
+        }
+
         var product = new Product
         {
             Name = dto.Name,
             Price = dto.Price,
             Stock = dto.Stock,
             Sku = normalizedSku,
-            IsActive = dto.IsActive
+            IsActive = dto.IsActive,
+            CategoryId = dto.CategoryId
         };
 
         _context.Products.Add(product);
@@ -284,7 +316,7 @@ public class ProductService : IProductService
                 ex);
         }
 
-        return ToAdminResponseDto(product);
+        return await GetByIdForAdmin(product.Id);
     }
 
     public async Task<AdminProductResponseDto> UpdateStock(
@@ -316,7 +348,7 @@ public class ProductService : IProductService
                 "The product stock was changed by another request. Reload it and try again.");
         }
 
-        return ToAdminResponseDto(product);
+        return await GetByIdForAdmin(id);
     }
 
     public async Task Delete(int id)
@@ -379,6 +411,15 @@ public class ProductService : IProductService
                 $"A product with SKU '{normalizedSku}' already exists.");
         }
 
+        var categoryExists = await _context.Categories
+            .AnyAsync(c => c.Id == dto.CategoryId);
+
+        if (!categoryExists)
+        {
+            throw new BadRequestException(
+                $"Category {dto.CategoryId} was not found.");
+        }
+
         _context.Entry(product)
             .Property(p => p.RowVersion)
             .OriginalValue = dto.RowVersion;
@@ -387,6 +428,7 @@ public class ProductService : IProductService
         product.Sku = normalizedSku;
         product.Price = dto.Price;
         product.IsActive = dto.IsActive;
+        product.CategoryId = dto.CategoryId;
 
         try
         {
@@ -407,21 +449,6 @@ public class ProductService : IProductService
                 ex);
         }
 
-        return ToAdminResponseDto(product);
-    }
-
-    private static AdminProductResponseDto ToAdminResponseDto(
-        Product product)
-    {
-        return new AdminProductResponseDto
-        {
-            Id = product.Id,
-            Name = product.Name,
-            Sku = product.Sku,
-            Price = product.Price,
-            Stock = product.Stock,
-            IsActive = product.IsActive,
-            RowVersion = product.RowVersion
-        };
+        return await GetByIdForAdmin(id);
     }
 }

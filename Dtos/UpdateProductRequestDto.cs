@@ -14,6 +14,8 @@ public class UpdateProductRequestDto
     public decimal Price { get; set; }
 
     public bool IsActive { get; set; }
+    [Range(1, int.MaxValue)]
+    public int CategoryId { get; set; }
 
     [Required]
     public byte[] RowVersion { get; set; } = null!;

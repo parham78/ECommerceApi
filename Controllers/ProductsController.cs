@@ -14,17 +14,19 @@ public class ProductsController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetAll(
-    string? search = null,
-    decimal? minPrice = null,
-    decimal? maxPrice = null,
-    bool? inStock = null,
-    string? sortBy = null,
-    string? sortDirection = null,
-    int page = 1,
-    int pageSize = 10)
+        string? search = null,
+        string? category = null,
+        decimal? minPrice = null,
+        decimal? maxPrice = null,
+        bool? inStock = null,
+        string? sortBy = null,
+        string? sortDirection = null,
+        int page = 1,
+        int pageSize = 10)
     {
         var products = await _productService.GetAll(
             search,
+            category,
             minPrice,
             maxPrice,
             inStock,
@@ -35,12 +37,13 @@ public class ProductsController : ControllerBase
 
         return Ok(products);
     }
+
     [HttpGet("admin")]
     [Authorize(Roles = AppRoles.Admin)]
     public async Task<IActionResult> GetAllForAdmin(
-    bool? isActive = null,
-    int page = 1,
-    int pageSize = 10)
+        bool? isActive = null,
+        int page = 1,
+        int pageSize = 10)
     {
         var products = await _productService.GetAllForAdmin(
             isActive,
@@ -50,7 +53,6 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -58,6 +60,7 @@ public class ProductsController : ControllerBase
 
         return Ok(product);
     }
+
     [HttpGet("admin/{id}")]
     [Authorize(Roles = AppRoles.Admin)]
     public async Task<IActionResult> GetByIdForAdmin(int id)
@@ -66,11 +69,6 @@ public class ProductsController : ControllerBase
 
         return Ok(product);
     }
-
-
-
-
-
 
     [HttpPost]
     [Authorize(Roles = AppRoles.Admin)]
@@ -85,19 +83,17 @@ public class ProductsController : ControllerBase
             product);
     }
 
-
     [HttpPut("{id}/stock")]
     [Authorize(Roles = AppRoles.Admin)]
     public async Task<IActionResult> UpdateStock(
-    int id,
-    [FromBody] UpdateStockRequestDto dto)
+        int id,
+        [FromBody] UpdateStockRequestDto dto)
     {
         var product =
             await _productService.UpdateStock(id, dto);
 
         return Ok(product);
     }
-
 
     [HttpDelete("{id}")]
     [Authorize(Roles = AppRoles.Admin)]
@@ -107,11 +103,12 @@ public class ProductsController : ControllerBase
 
         return NoContent();
     }
+
     [HttpPut("{id}")]
     [Authorize(Roles = AppRoles.Admin)]
     public async Task<IActionResult> UpdateProduct(
-    int id,
-    UpdateProductRequestDto dto)
+        int id,
+        UpdateProductRequestDto dto)
     {
         var product = await _productService.Update(id, dto);
 

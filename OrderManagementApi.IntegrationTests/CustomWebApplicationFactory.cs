@@ -11,11 +11,13 @@ public class CustomWebApplicationFactory
 {
     private const string TestConnectionString =
         "Server=localhost;Database=OrderManagementEfCoreDb_Test;Trusted_Connection=True;TrustServerCertificate=True;";
+
     public const string TestAdminEmail =
         "integration.admin@test.local";
 
     public const string TestAdminPassword =
         "IntegrationAdmin123!";
+
     protected override void ConfigureWebHost(
         IWebHostBuilder builder)
     {
@@ -24,27 +26,26 @@ public class CustomWebApplicationFactory
         builder.ConfigureAppConfiguration((context, config) =>
         {
             config.AddInMemoryCollection(
-    new Dictionary<string, string?>
-    {
-        ["Jwt:Key"] =
-            "IntegrationTestingKey12345678901234567890",
+                new Dictionary<string, string?>
+                {
+                    ["Jwt:Key"] =
+                        "IntegrationTestingKey12345678901234567890",
 
-        ["Jwt:Issuer"] =
-            "OrderManagementApi",
+                    ["Jwt:Issuer"] =
+                        "OrderManagementApi",
 
-        ["Jwt:Audience"] =
-            "OrderManagementApi",
+                    ["Jwt:Audience"] =
+                        "OrderManagementApi",
 
-        ["Jwt:ExpirationMinutes"] =
-            "30",
+                    ["Jwt:ExpirationMinutes"] =
+                        "30",
 
-        ["Admin:Email"] =
-            TestAdminEmail,
+                    ["Admin:Email"] =
+                        TestAdminEmail,
 
-        ["Admin:Password"] =
-            TestAdminPassword
-    });
-
+                    ["Admin:Password"] =
+                        TestAdminPassword
+                });
         });
 
         builder.ConfigureServices(services =>
@@ -62,6 +63,19 @@ public class CustomWebApplicationFactory
                 options =>
                     options.UseSqlServer(
                         TestConnectionString));
+
+            using var serviceProvider =
+                services.BuildServiceProvider();
+
+            using var scope =
+                serviceProvider.CreateScope();
+
+            var context =
+                scope.ServiceProvider
+                    .GetRequiredService<
+                        OrderManagementDbContext>();
+
+            context.Database.Migrate();
         });
     }
 }
