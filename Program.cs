@@ -25,6 +25,9 @@ builder.Services.AddScoped<
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.Configure<StripeOptions>(
+    builder.Configuration.GetSection("Stripe"));
+builder.Services.AddScoped<StripePaymentService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
